@@ -1,0 +1,4 @@
+. SetPathosEnv
+RUN=`basename $0`
+CP=`ls -1 ${PATHOS_HOME}/lib/Canary-all-*.jar | tail -1`
+java $JAVA_OPTS -cp $CP org.petermac.pathos.pipeline.$RUN $*

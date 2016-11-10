@@ -1,0 +1,149 @@
+//	build.gradle
+//
+//	Build file for Canary
+//
+//	01	kdoig	1-Jun-16
+//
+
+apply plugin: 'groovy'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+
+
+//  Release version
+//
+version = '1.2.2'
+
+//  Get install root from PATHOS_HOME environment variable
+//
+def pathospath = System.getenv().get("PATHOS_HOME")
+def libpath    = pathospath + '/lib'
+
+repositories {
+    jcenter()
+}
+
+buildscript {
+    repositories {
+        maven {
+            url "https://jcenter.bintray.com"
+            jcenter()  // this is for shadowjar only
+
+        }
+
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
+    }
+}
+
+shadowJar {
+    archiveName = "Canary-all-${version}.${extension}"
+
+    mergeServiceFiles('META-INF/spring.*')
+}
+
+//
+//  Deployment task
+//
+
+
+//  Todo: delete old versions of jars
+uploadArchives {
+    repositories
+    {
+        flatDir
+        {
+            println "Deploying Canary-all-${version}.jar to " + libpath
+            dirs libpath
+        }
+    }
+}
+
+//
+//  Copy third party Jars to production
+//
+task copyJars
+uploadArchives.dependsOn copyJars
+copyJars.dependsOn shadowJar
+
+copyJars <<
+{
+    println "Deploying " + "Canary-all-${version}.jar" + " to " + libpath
+
+    ant.copy( toDir: libpath  )
+    {
+                fileset(dir: './build/libs')
+                        {
+                            include(name: "Canary-all-${version}.jar")
+
+                        }
+    }
+}
+
+//
+//  Copy CLI launch scripts to bin
+//
+task copyBin
+uploadArchives.dependsOn copyBin
+
+copyBin <<
+{
+    def binpath = pathospath + '/bin'
+    println "Deploying CLI to " + binpath
+    ant.copy( toDir: binpath, Filtering: true )
+    {
+        filterchain()
+        {
+            replacetokens()
+            {
+                token(key: "GRADLE_PATHOS_HOME", value: pathospath)
+            }
+        }
+        fileset(dir: 'src/bin')
+        {
+            include(name: '*')
+        }
+    }
+
+    //  Make executable
+    //
+    ant.chmod( perm: '+x' )
+    {
+        fileset(dir: binpath)
+        {
+            include(name: '*')
+        }
+    }
+}
+
+//
+//  Finds groovy here as well as dependent Jars
+//
+dependencies
+{ 
+    compile group: 'org.codehaus.groovy' ,name: 'groovy-all', version: '2.1.9'
+
+    compile files( fileTree(dir: '../PathosCore/build/libs', includes: ["PathosCore-all-${version}.jar"]))
+}
+
+/*
+dependencies 
+{
+	files( fileTree(dir: '../PathosCore/build/libs', includes: ["PathosCore-all-${version}.jar"]))
+}
+*/
+
+//  Optional JAR settings
+//
+jar
+{
+    manifest
+    {
+        attributes 'Implementation-Title': 'Canary JAR', 'Implementation-Version': version }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.10'
+}
+
