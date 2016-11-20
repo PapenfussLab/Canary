@@ -10,7 +10,7 @@ Clinical diagnostics is being transformed by the technology capable of analysing
 Amplicon sequencing is a cost effective way of deeply sequencing a panel of genes of interest. Canary has been implemented for use with a number of clinical cancer diagnostic panels
 at the Peter MacCallum Cancer Centre, the largest cancer only hospital in Australia.
 
-The accuracy, turn around time and reproducability of clinical diagnostic sequencing relies heavily on bioinformatics pipelines to convert raw sequencing data into meaningful variants
+The accuracy, turn around time and reproducibility of clinical diagnostic sequencing relies heavily on bioinformatics pipelines to convert raw sequencing data into meaningful variants
 that can be curated for patient reporting.
 Canary is a clinically tested tool which performs the key pipeline tasks of:
 - alignment of amplicon reads, 
