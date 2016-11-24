@@ -3,16 +3,19 @@
 //	Build file for Canary
 //
 //	01	kdoig	1-Jun-16
+//  02  kdoig   24-Nov-16 Changed to Canary release numbering 1.0.0
 //
 
 apply plugin: 'groovy'
 apply plugin: 'com.github.johnrengelman.shadow'
 
-
-
 //  Release version
 //
-version = '1.2.2'
+version = '1.0.0'
+
+//  PathOS core JAR version
+//
+def pa_version = '1.2.2'
 
 //  Get install root from PATHOS_HOME environment variable
 //
@@ -28,10 +31,9 @@ buildscript {
         maven {
             url "https://jcenter.bintray.com"
             jcenter()  // this is for shadowjar only
-
         }
-
     }
+
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
     }
@@ -47,8 +49,6 @@ shadowJar {
 //  Deployment task
 //
 
-
-//  Todo: delete old versions of jars
 uploadArchives {
     repositories
     {
@@ -71,13 +71,15 @@ copyJars <<
 {
     println "Deploying " + "Canary-all-${version}.jar" + " to " + libpath
 
+    delete fileTree( dir: libpath , include: '**/Canary-*.jar' )
+    delete fileTree( dir: libpath , include: '**/Canary-*.jar.sha1' )
+
     ant.copy( toDir: libpath  )
     {
-                fileset(dir: './build/libs')
-                        {
-                            include(name: "Canary-all-${version}.jar")
-
-                        }
+        fileset(dir: './build/libs')
+        {
+            include(name: "Canary-all-${version}.jar")
+        }
     }
 }
 
@@ -124,15 +126,8 @@ dependencies
 { 
     compile group: 'org.codehaus.groovy' ,name: 'groovy-all', version: '2.1.9'
 
-    compile files( fileTree(dir: '../PathosCore/build/libs', includes: ["PathosCore-all-${version}.jar"]))
+    compile files( fileTree(dir: '../PathosCore/build/libs', includes: ["PathosCore-all-${pa_version}.jar"]))
 }
-
-/*
-dependencies 
-{
-	files( fileTree(dir: '../PathosCore/build/libs', includes: ["PathosCore-all-${version}.jar"]))
-}
-*/
 
 //  Optional JAR settings
 //
@@ -140,7 +135,8 @@ jar
 {
     manifest
     {
-        attributes 'Implementation-Title': 'Canary JAR', 'Implementation-Version': version }
+        attributes 'Implementation-Title': 'Canary JAR', 'Implementation-Version': version
+    }
 }
 
 task wrapper(type: Wrapper) {

@@ -35,6 +35,9 @@ import java.util.regex.Pattern
  *
  * Author:  Kenneth Doig
  * Date:    14-Mar-2015 to 07-Apr-2015
+ * Changes:
+ *
+ * 10   kdd 24-Nov-16       Added semantic versioning - removed IGVH mode
  */
 
 @Log4j
@@ -43,7 +46,6 @@ class Canary
     private SmithWaterman           sw        = new SmithWaterman()
     private static File             debugfile = new File( "debug.log" )
     private static boolean          debug     = false
-    private static boolean          igvh      = false
     private static boolean          complex   = false
     private static def              startTime = System.currentTimeMillis()
     private static int              flank     = 5            // size of flanking region for regexs
@@ -60,13 +62,14 @@ class Canary
 
     //  Constants Todo: make arguments
     //
-    private final static Double     COMPRESS_RATIO  = 4.8     // approximate gzip FASTQ compression ratio
-    private final static int        HOMO_RUNS       = 6       // minimum size of homopolymer runs to flag
-    private final static int        MIN_OVERLAP     = 10      // minimum overlap required between read pairs
-    private final static int        PRIMER_BASES    = 5       // extra primer bases to add to alignment. This allows
-                                                              // for bases modified as first or second base of actual read
-    private final static int        MAX_COMPLEX_MUT = 30      // Maximum size of complex mutations
-    private final static int      INTER_MUT_MNP_GAP = 15      // Maximum size of inter mutation gap for complex mutations
+    private final static String     VERSION             = '1.0.0' // Canary version number
+    private final static Double     COMPRESS_RATIO      = 4.8     // approximate gzip FASTQ compression ratio
+    private final static int        HOMO_RUNS           = 6       // minimum size of homopolymer runs to flag
+    private final static int        MIN_OVERLAP         = 10      // minimum overlap required between read pairs
+    private final static int        PRIMER_BASES        = 5       // extra primer bases to add to alignment. This allows
+                                                                  // for bases modified as first or second base of actual read
+    private final static int        MAX_COMPLEX_MUT     = 30      // Maximum size of complex mutations
+    private final static int        INTER_MUT_MNP_GAP   = 15      // Maximum size of inter mutation gap for complex mutations
 
     //  BAM file writer (optional)
     //
@@ -97,27 +100,33 @@ class Canary
         {
             h(      longOpt: 'help',		                      'This help message' )
             d(      longOpt: 'debug',		                      'Turn on debugging' )
-            a(      longOpt: 'amplicon', args: 1, required: true, 'Amplicon FASTA file' )
-            p(      longOpt: 'primers',  args: 1, required: true, 'Amplicon Primers file' )
-          act(      longOpt: 'action',   args: 1, required: false,'Actionable variants VCF file' )
-            v(      longOpt: 'vcf',      args: 1, required: true, 'Found variants VCF file' )
-            o(      longOpt: 'output',   args: 1, required: false,'Output report file' )
-            f(      longOpt: 'flank',    args: 1, required: false,'Size of flanking region (bp) [5]' )
-            fastq(  longOpt: 'fastq',    args: 1, required: false,'Optional FASTQ output files prefix' )
-            maxmut( longOpt: 'maxmut',   args: 1, required: false,'Maximum number of mutations allowed per read pair [10]' )
-            r(      longOpt: 'reads',    args: 1, required: false,'Percent of reads to process [100]' )
-            i(      longOpt: 'igvh',              required: false,'Only output merged reads for IgVH analysis' )
-            c(      longOpt: 'complex',           required: false,'Coalesce complex events aka MNPs' )
-            n(      longOpt: 'nocache',           required: false,'Dont use read cache' )
-            b(      longOpt: 'bam', args: 1,      required: false,'Optional BAM file of alignment' )
-            minpair(longOpt: 'minpair',  args: 1, required: false,'Min read pairs for variants [10]' )
-            vaf(    longOpt: 'vaf',      args: 1, required: false,'Minimum VAF for variants [3.0%]' )
-            filt(   longOpt: 'filter',   args: 1, required: false,'List of comma separated amplicon names to use' )
+            a(      longOpt: 'amplicon', args: 1, 'Amplicon FASTA file' )
+            p(      longOpt: 'primers',  args: 1, 'Amplicon Primers file' )
+          act(      longOpt: 'action',   args: 1, 'Actionable variants VCF file' )
+            v(      longOpt: 'vcf',      args: 1, 'Found variants VCF file' )
+            o(      longOpt: 'output',   args: 1, 'Output report file' )
+            f(      longOpt: 'flank',    args: 1, 'Size of flanking region (bp) [5]' )
+            fastq(  longOpt: 'fastq',    args: 1, 'Optional FASTQ output files prefix' )
+            maxmut( longOpt: 'maxmut',   args: 1, 'Maximum number of mutations allowed per read pair [10]' )
+            r(      longOpt: 'reads',    args: 1, 'Percent of reads to process [100]' )
+            c(      longOpt: 'complex',           'Coalesce complex events aka MNPs' )
+            n(      longOpt: 'nocache',           'Dont use read cache' )
+            ver(    longOpt: 'version',           'Display Canary version and exit' )
+            b(      longOpt: 'bam', args: 1,      'Optional BAM file of alignment' )
+            minpair(longOpt: 'minpair',  args: 1, 'Min read pairs for variants [10]' )
+            vaf(    longOpt: 'vaf',      args: 1, 'Minimum VAF for variants [3.0%]' )
+            filt(   longOpt: 'filter',   args: 1, 'List of comma separated amplicon names to use' )
         }
 
         def opt = cli.parse( args )
         if ( ! opt ) return
 
+        if ( opt.version )
+        {
+            println version()
+            return
+        }
+        
         if ( opt.help || opt.arguments().size() != 2 )
         {
             cli.usage()
@@ -133,10 +142,6 @@ class Canary
             Logger.getRootLogger().setLevel(Level.DEBUG)
         }
         log.debug( "Debugging turned on!" )
-
-        //  Switch on IgVH mode
-        //
-        if ( opt.igvh ) igvh = true;
 
         //  Switch off cache mode
         //
@@ -698,11 +703,6 @@ class Canary
         String  readStatus  = 'unmapped'
         boolean written     = false
 
-        //  Calculate IGVH stats only
-        //
-        if ( igvh )
-            return igvhStats( read1, read2, stats )
-
         //  Check each amplicon/variant against read
         //
         for ( amp in amps )
@@ -824,6 +824,7 @@ class Canary
 
     /**
      * Create a BAM file from alignments
+     * Todo: Set mapping quality
      *
      * @param bamFile
      * @param sample
@@ -848,9 +849,9 @@ class Canary
         def samRecord = new SAMRecord( sfh )
         samRecord.setReadName( head )
         samRecord.setFlags( 16 )
-        samRecord.setReferenceName( chr )         // chromosome
-        samRecord.setAlignmentStart( pos )        // genomic pos
-        samRecord.setMappingQuality( 60 )
+        samRecord.setReferenceName( chr )           // chromosome
+        samRecord.setAlignmentStart( pos )          // genomic pos
+        samRecord.setMappingQuality( 60 )           // constant quality for the moment
         samRecord.setCigarString( cigar )
         samRecord.setReadString( bases )
         samRecord.setBaseQualityString( quals )
@@ -1058,139 +1059,6 @@ class Canary
     }
 
     /**
-     * Process a pair of amplicon reads by finding their primers and identifying a given set of variants
-     * Collect the stats for each mutation for reporting
-     *
-     * @param amps      List of Maps of variant/amplicons to search for
-     * @param bases1    Read 1 bases
-     * @param bases2    Read 2 bases
-     * @param quality1  Read 1 quality
-     * @param quality2  Read 2 quality
-     * @param stats     Accumulated statistics before this read pair
-     * @return          Accumulated statistics after  this read pair
-     */
-//    static Map processReadRE( List<Map> amps, String bases1, String bases2, String quals1, String quals2, Map stats )
-//    {
-//        boolean fwdused = false
-//        boolean revused = false
-//
-//        //  Check each amplicon/variant against read
-//        //
-//        for ( amp in amps )
-//        {
-//            boolean fwd = bases1.startsWith(amp.fwd.primer) || bases2.startsWith(amp.fwd.primer)
-//            boolean rev = bases2.startsWith(amp.rev.primer) || bases1.startsWith(amp.rev.primer)
-//
-//            //  We must have at least one matching primer
-//            //
-//            if ( ! ( fwd || rev )) continue
-//
-//            //  Swap fwd and rev reads if needed
-//            //
-//            if ( bases2.startsWith(amp.fwd.primer) || bases1.startsWith(amp.rev.primer))
-//            {
-//                String x = bases2; bases2 = bases1; bases1 = x
-//                       x = quals2; quals2 = quals1; quals1 = x
-//            }
-//
-//            //  Skip reads without a matching primer
-//            //
-//            int fwdoff = amp.fwd.offset
-//            int revoff = amp.rev.offset
-//            if ( ! bases1.startsWith(amp.fwd.primer)) fwdoff = 0
-//            if ( ! bases2.startsWith(amp.rev.primer)) revoff = 0
-//            if ( bases1.startsWith(amp.fwd.primer)) fwdused = true
-//            if ( bases2.startsWith(amp.rev.primer)) revused = true
-//
-//            //  Set up stats to collect data
-//            //
-//            def name = "${amp.var}-${amp.amp}"
-//            if ( ! stats[name] )
-//                stats[name] = [var: amp.var, amp: amp.amp, cnt:0, fwd:0, rev:0, oor:0, qual:0, ref: amp.ref , alt: amp.alt, refcnt:0, altcnt:0, othcnt:0 ]
-//
-//            Map m = stats[name] as Map
-//
-//            //  Total amplicon counts
-//            //
-//            ++m.cnt
-//            if ( fwdoff ) ++m.fwd
-//            if ( revoff ) ++m.rev
-//
-//            //  Variant is out of range
-//            //
-//            if ( fwdoff==0 && revoff==0 )
-//            {
-//                ++m.oor
-//                continue
-//            }
-//
-//            //  Extract bases and quality from reads
-//            //
-//            def fwdq = quals1[fwdoff]
-//            def revq = quals2[revoff]
-//
-//            //  If both reads fail quality test, were done
-//            //
-//            if ( fwdq < '?' ) fwdoff = 0            // less than Q30
-//            if ( revq < '?' ) revoff = 0
-//            if ( fwdoff==0 && revoff==0 )
-//            {
-//                ++m.qual        // poor quality bases
-//                continue
-//            }
-//
-//            //  Match on forward read
-//            //
-//            Matcher fwdmatch = null, revmatch = null
-//            if ( fwdoff ) fwdmatch = amp.fwd.regex.matcher(bases1)
-//            if ( revoff ) revmatch = amp.rev.regex.matcher(bases2)
-//
-//            //  Set matching bases
-//            //  If we have a match but match string is null then its a deletion or insertion
-//            //  denoted as a '-'
-//            //
-//            String fwdbases = '', revbases = ''
-//            if ( fwdmatch?.count ) fwdbases = fwdmatch[0][1] ? fwdmatch[0][1] : '-'
-//            if ( revmatch?.count ) revbases = revmatch[0][1] ? Locus.revcom(revmatch[0][1]) : '-'
-//
-//            //  Nothing found
-//            //
-//            if ( fwdbases == '' && revbases == '' )
-//            {
-//                ++m.othcnt
-//                continue
-//            }
-//
-//            //  Found reference
-//            //
-//            if (( fwdbases == '' || fwdbases == m.ref ) && ( revbases == '' || revbases == m.ref ))
-//            {
-//                ++m.refcnt
-//                continue
-//            }
-//
-//            //  Found alternative
-//            //
-//            if (( fwdbases == '' || fwdbases == m.alt ) && ( revbases == '' || revbases == m.alt ))
-//            {
-//                ++m.altcnt
-//                continue
-//            }
-//
-//            //  Discordant matches
-//            //
-//            ++m.othcnt
-//        }
-//
-//        //  Dump out unmatched reads
-//        //
-//        if ( ! fwdused && debug ) debugfile << bases1 + '\n'
-//        if ( ! revused && debug ) debugfile << bases2 + '\n'
-//
-//        return stats
-//    }
-
-    /**
      * Format the statistics for output
      *
      * @param stats   Map of processed stats
@@ -1250,7 +1118,6 @@ class Canary
 
         return sorted
     }
-
 
     /**
      * Format the statistics for output
@@ -1590,36 +1457,13 @@ class Canary
     }
 
     /**
-     * Calculate IGVH stats only
+     * Version method
      *
-     * @param read1
-     * @param read2
-     * @param stats
-     * @return
+     * @return Canary version String
      */
-    private Map igvhStats( Map read1, Map read2, Map stats )
+    public static String version()
     {
-        //  trim off rubbish
-        //
-        String bases1 = read1.bases[0..250]
-        String bases2 = read2.bases[0..250]
-
-        //  Reverse second read to be on fwd strand for alignment
-        //
-        bases2 = Locus.revcom(bases2)
-
-        //  Align the read pair
-        //
-        Map res = sw.align(  bases2, bases1 )
-        Map fmt = sw.format( bases2, bases1, res )
-        debugfile << "${res} snp=${fmt.snps} ins=${fmt.ins} dels=${fmt.dels}\n${fmt.ref}\n${fmt.align}\n${fmt.qry}\n"
-
-        //  Merge aligned read pair to create a single read
-        //
-        String mergedRead = sw.mergePair( fmt )
-        debugfile << "mrg: " + mergedRead + "\n"
-
-        return stats
+        return( "Canary ${VERSION}")
     }
 }
 
