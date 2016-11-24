@@ -23,6 +23,7 @@ import org.apache.log4j.Logger
 import org.petermac.util.Fasta
 import org.petermac.util.SmithWaterman
 import org.petermac.util.Vcf
+import org.petermac.util.Vcf2Tsv
 
 import java.util.regex.Pattern
 
@@ -98,24 +99,27 @@ class Canary
         //
         cli.with
         {
-            h(      longOpt: 'help',		                      'This help message' )
-            d(      longOpt: 'debug',		                      'Turn on debugging' )
-            a(      longOpt: 'amplicon', args: 1, 'Amplicon FASTA file' )
-            p(      longOpt: 'primers',  args: 1, 'Amplicon Primers file' )
-          act(      longOpt: 'action',   args: 1, 'Actionable variants VCF file' )
-            v(      longOpt: 'vcf',      args: 1, 'Found variants VCF file' )
-            o(      longOpt: 'output',   args: 1, 'Output report file' )
-            f(      longOpt: 'flank',    args: 1, 'Size of flanking region (bp) [5]' )
-            fastq(  longOpt: 'fastq',    args: 1, 'Optional FASTQ output files prefix' )
-            maxmut( longOpt: 'maxmut',   args: 1, 'Maximum number of mutations allowed per read pair [10]' )
-            r(      longOpt: 'reads',    args: 1, 'Percent of reads to process [100]' )
+            h(      longOpt: 'help',		        'This help message' )
+            d(      longOpt: 'debug',		        'Turn on debugging (Note: will generate large file of alignments [debug.out])' )
+            a(      longOpt: 'amplicon',   args: 1, 'Amplicon FASTA file' )
+            p(      longOpt: 'primers',    args: 1, 'Amplicon Primers file' )
+            v(      longOpt: 'vcf',        args: 1, 'Found variants VCF file' )
+            o(      longOpt: 'output',     args: 1, 'Output report file' )
+            f(      longOpt: 'flank',      args: 1, 'Size of flanking region (bp) [5]' )
+            fastq(  longOpt: 'fastq',      args: 1, 'Optional FASTQ output files prefix' )
+            maxmut( longOpt: 'maxmut',     args: 1, 'Maximum number of mutations allowed per read pair [10]' )
+            r(      longOpt: 'reads',      args: 1, 'Percent of reads to process [100]' )
             c(      longOpt: 'complex',           'Coalesce complex events aka MNPs' )
             n(      longOpt: 'nocache',           'Dont use read cache' )
             ver(    longOpt: 'version',           'Display Canary version and exit' )
-            b(      longOpt: 'bam', args: 1,      'Optional BAM file of alignment' )
-            minpair(longOpt: 'minpair',  args: 1, 'Min read pairs for variants [10]' )
-            vaf(    longOpt: 'vaf',      args: 1, 'Minimum VAF for variants [3.0%]' )
-            filt(   longOpt: 'filter',   args: 1, 'List of comma separated amplicon names to use' )
+            b(      longOpt: 'bam',        args: 1, 'Optional BAM file of alignment' )
+            minpair(longOpt: 'minpair',    args: 1, 'Min read pairs for variants [10]' )
+            vaf(    longOpt: 'vaf',        args: 1, 'Minimum VAF for variants [3.0%]' )
+            filt(   longOpt: 'filter',     args: 1, 'List of comma separated amplicon names to use' )
+            t(      longOpt: 'tsv',        args: 1, 'TSV (Tab separated variable) file of VCF output' )
+            cols(   longOpt: 'columns',    args: 1, 'File of VCF field names to output to TSV (one per line with optional alias after comma)' )
+            norm(   longOpt: 'normalise',  args: 1, 'Generates annotated VCF file from VCF output' )
+            ts(     longOpt: 'transcript', args: 1, 'File of transcripts mapping genes -> refseq (without version)' )
         }
 
         def opt = cli.parse( args )
@@ -271,7 +275,8 @@ class Canary
             }
         }
 
-        //  Extract file names Todo: support multiple pairs of read files eg NextSeq, HiSeq
+        //  Extract file names
+        //  Todo: support multiple pairs of read files from multiple flowcells eg NextSeq, HiSeq
         //  Todo: need to support Bzip2 files also
         //
         List<String> extra = opt.arguments()
@@ -308,6 +313,34 @@ class Canary
             fq2Writer = ff.newWriter( new File( prefix + "_R2.fastq"))
         }
 
+        //  Check we have a transcript file if normalising
+        //
+        if ( opt.normalise && ! opt.transcript )
+        {
+            log.fatal( "--normalise option requires --transcript option")
+            System.exit(1)
+        }
+
+        Map tsMap = null
+        if ( opt.transcript )
+        {
+            File tsf = new File( opt.transcript as String )
+            if ( ! tsf.exists())
+            {
+                log.fatal( "Transcript file doesn't exist ${opt.transcript}")
+                System.exit(1)
+            }
+
+            tsMap = NormaliseVcf.loadTranscripts( tsf )
+            if ( tsMap.size() < 1 )
+            {
+                log.fatal( "No Transcripts found in file ${opt.transcript}")
+                System.exit(1)
+            }
+
+            log.info( "Loaded ${tsMap.size()} gene/transcripts from ${tsf}")
+        }
+
         //  Run it all
         //
         int nlines = new Canary().runCanary( ampfile, opt.filter ?: '', primfile, rows, ofile, vcffile, r1file, r2file, pctreads )
@@ -317,6 +350,51 @@ class Canary
         if ( bamWriter ) bamWriter.close()
         if ( fq1Writer ) fq1Writer.close()
         if ( fq2Writer ) fq2Writer.close()
+
+        //  Set TSV VCF input file
+        //
+        File tsvVcfFile = vcffile
+
+        //  Create optional Normalised/Annotated VCF file of output
+        //
+        if ( opt.normalise && nlines )
+        {
+            File normf  = new File( opt.normalise as String )
+            normf.delete()
+
+            //  Annotate with HGVS nomenclature and 3' shift all variants in the VCF
+            //
+            NormaliseVcf.normaliseVcfFile( vcffile, normf, tsMap )
+
+            //  use the annotated VCF if we are outputting a TSV file
+            //
+            tsvVcfFile = normf
+        }
+
+        //  Create optional TSV file from VCF output
+        //
+        if ( opt.tsv && nlines )
+        {
+            File tsvf  = new File( opt.tsv as String )
+            tsvf.delete()
+
+            //  Check for optional TSV column file
+            //
+            File colsf = null
+            if ( opt.columns )
+            {
+                colsf = new File( opt.columns as String )
+                if ( ! colsf.exists())
+                {
+                    log.error( "Columns file doesn't exist: ${opt.columns}")
+                    colsf = null
+                }
+            }
+
+            //  Convert VCF file to TSV table
+            //
+            Vcf2Tsv.vcf2Tsv( tsvVcfFile, tsvf, '', '', '', colsf, true )
+        }
 
         Integer elapsed = (System.currentTimeMillis() - startTime) / 1000    // seconds elapsed
         log.info( "Done: processed ${8*nlines} lines ${nlines} read pairs into ${vcffile} in ${elapsed} seconds" )
