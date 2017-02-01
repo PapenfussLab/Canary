@@ -3,14 +3,14 @@
 #	Run Canary for testing
 #
 
-#bin/Canary	--mutalyzer 'https://mutalyzer.nl' \
 bin/Canary	\
-		--mutalyzer  'https://vmts-mutalyzer1.unix.petermac.org.au' \
+		--mutalyzer 'https://mutalyzer.nl' \
 		--amplicon   Amplicon/amplicon.fa \
 		--primers    Amplicon/amplicon.primers.tsv \
 		--transcript etc/transcript.tsv \
 		--columns    etc/cols \
-		--reads      1 \
+		--reads      10 \
+		--complex	 \
 		--output     out.canary.tsv \
 		--vcf        out.canary.vcf \
 		--bam        out.canary.bam \
