@@ -1,0 +1,10 @@
+CHROM,chr
+POS  ,position
+ID
+REF
+ALT, altbases
+QUAL
+FILTER
+GT
+GQ
+gene
