@@ -2,7 +2,7 @@
 
 #	Set to install directory of Canary
 #
-CANARY_HOME=.
+CANARY_HOME=${CANARY_HOME:-/canary/install/dir}
 
 JAVA_OPTS="-XX:-UseSplitVerifier \
 -Dpathos.config=$CANARY_HOME/etc/canary.properties \
