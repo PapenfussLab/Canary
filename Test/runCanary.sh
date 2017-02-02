@@ -3,7 +3,10 @@
 #	Run Canary for testing
 #
 
-export CANARY_HOME=..
+##
+##	Set to Canary install directory
+##
+CANARY_HOME=/usr/local/dev/Canary
 
 $CANARY_HOME/bin/Canary	\
 		--mutalyzer 'https://mutalyzer.nl' \
@@ -11,7 +14,7 @@ $CANARY_HOME/bin/Canary	\
 		--primers    $CANARY_HOME/Amplicon/amplicon.primers.tsv \
 		--transcript $CANARY_HOME/etc/transcript.tsv \
 		--columns    $CANARY_HOME/etc/cols \
-		--reads      10 \
+		--reads      100 \
 		--complex	    \
 		--output     out.canary.tsv \
 		--vcf        out.canary.vcf \

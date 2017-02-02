@@ -1,0 +1,104 @@
+2017-02-02 12:18:41,898 [main] INFO  org.petermac.pathos.pipeline.Canary - Canary [--mutalyzer, https://mutalyzer.nl, --amplicon, /usr/local/dev/Canary/Amplicon/amplicon.fa, --primers, /usr/local/dev/Canary/Amplicon/amplicon.primers.tsv, --transcript, /usr/local/dev/Canary/etc/transcript.tsv, --columns, /usr/local/dev/Canary/etc/cols, --reads, 10, --complex, --output, out.canary.tsv, --vcf, out.canary.vcf, --bam, out.canary.bam, --normalise, out.norm.vcf, --tsv, out.norm.tsv, /usr/local/dev/Canary/Fastq/14M6168_AACCCCTC-TAGACCTA_L001_R1_001.fastq.gz, /usr/local/dev/Canary/Fastq/14M6168_AACCCCTC-TAGACCTA_L001_R2_001.fastq.gz]
+2017-02-02 12:18:42,268 [main] INFO  org.petermac.pathos.pipeline.Canary - Loaded 14808 gene/transcripts from /usr/local/dev/Canary/etc/transcript.tsv
+2017-02-02 12:18:42,309 [main] INFO  org.petermac.util.SmithWaterman - Loading SmithWaterman JNI Library from /usr/local/dev/Canary/lib/libsswjni.jnilib
+2017-02-02 12:18:42,362 [main] INFO  org.petermac.pathos.pipeline.Canary - Found Reads file: readlen=150 filesize=30495012 estimated reads=392429
+2017-02-02 12:18:42,373 [main] INFO  org.petermac.pathos.pipeline.Canary - Found 221 Amplicons
+2017-02-02 12:18:42,596 [main] INFO  org.petermac.pathos.pipeline.Canary - PIK3CA4_11.chr3.178936074.178936095_tile_1 has fwd rev matches to Off_target_1_PIK3CA4_11.chr3.178936074.178936095_tile_1-PIK3CA4_11.chr3.178936074.178936095_tile_1
+2017-02-02 12:18:42,596 [main] INFO  org.petermac.pathos.pipeline.Canary - PIK3CA12.chr3.178938860.178938860_tile_1 has fwd rev matches to Off_target_2_PIK3CA12.chr3.178938860.178938860_tile_1-PIK3CA12.chr3.178938860.178938860_tile_1
+2017-02-02 12:18:42,600 [main] INFO  org.petermac.pathos.pipeline.Canary - PTEN13.chr10.89720716.89720852_tile_1 has fwd rev matches to Off_target_4_PTEN13.chr10.89720716.89720852_tile_1-PTEN13.chr10.89720716.89720852_tile_1
+2017-02-02 12:18:42,603 [main] INFO  org.petermac.pathos.pipeline.Canary - Using 212 Amplicons
+2017-02-02 12:19:00,040 [main] WARN  org.petermac.pathos.pipeline.Canary - Maximum estimated read limit reached: 39242 read pairs
+2017-02-02 12:19:00,111 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
+2017-02-02 12:19:00,392 [main] INFO  org.petermac.pathos.pipeline.Canary - Found 46 events
+2017-02-02 12:19:00,420 [main] INFO  org.petermac.pathos.pipeline.Canary - Found 44 variants
+2017-02-02 12:19:01,091 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Mutalyzer: No Proxy set
+2017-02-02 12:19:01,092 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Mutalyzer: No Proxy set
+2017-02-02 12:19:01,120 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
+2017-02-02 12:19:01,125 [main] INFO  org.petermac.pathos.pipeline.MutalyzerUtil - Loaded 44 variants from out.canary.vcf
+2017-02-02 12:19:04,195 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Job running: retrieve with: https://mutalyzer.nl/batch-job-result/batch-job-34ee6f7b-1aac-4b51-937b-c593ba94897b.txt
+2017-02-02 12:19:19,452 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Job running: retrieve with: https://mutalyzer.nl/batch-job-result/batch-job-7c3ded62-d2ff-4989-ab58-906e1d08cd92.txt
+2017-02-02 12:19:27,653 [main] INFO  org.petermac.pathos.pipeline.MutalyzerUtil - Found 0 redesignated variants
+2017-02-02 12:19:27,711 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
+2017-02-02 12:19:27,837 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
+2017-02-02 12:19:27,939 [main] INFO  org.petermac.pathos.pipeline.MutalyzerUtil - convertVcf(out.canary.vcf): In 44 Out 44
+2017-02-02 12:19:28,015 [main] INFO  org.petermac.pathos.pipeline.Canary - Done: processed 313944 lines 39243 read pairs into out.canary.vcf in 46 seconds
+2017-02-02 12:24:17,058 [main] INFO  org.petermac.pathos.pipeline.Canary - Canary [--mutalyzer, https://mutalyzer.nl, --amplicon, /usr/local/dev/Canary/Amplicon/amplicon.fa, --primers, /usr/local/dev/Canary/Amplicon/amplicon.primers.tsv, --transcript, /usr/local/dev/Canary/etc/transcript.tsv, --columns, /usr/local/dev/Canary/etc/cols, --reads, 10, --complex, --output, out.canary.tsv, --vcf, out.canary.vcf, --bam, out.canary.bam, --normalise, out.norm.vcf, --tsv, out.norm.tsv, /usr/local/dev/Canary/Fastq/14M6168_AACCCCTC-TAGACCTA_L001_R1_001.fastq.gz, /usr/local/dev/Canary/Fastq/14M6168_AACCCCTC-TAGACCTA_L001_R2_001.fastq.gz]
+2017-02-02 12:24:17,402 [main] INFO  org.petermac.pathos.pipeline.Canary - Loaded 14808 gene/transcripts from /usr/local/dev/Canary/etc/transcript.tsv
+2017-02-02 12:24:17,436 [main] INFO  org.petermac.util.SmithWaterman - Loading SmithWaterman JNI Library from /usr/local/dev/Canary/lib/libsswjni.jnilib
+2017-02-02 12:24:17,480 [main] INFO  org.petermac.pathos.pipeline.Canary - Found Reads file: readlen=150 filesize=30495012 estimated reads=392429
+2017-02-02 12:24:17,491 [main] INFO  org.petermac.pathos.pipeline.Canary - Found 221 Amplicons
+2017-02-02 12:24:17,693 [main] INFO  org.petermac.pathos.pipeline.Canary - PIK3CA4_11.chr3.178936074.178936095_tile_1 has fwd rev matches to Off_target_1_PIK3CA4_11.chr3.178936074.178936095_tile_1-PIK3CA4_11.chr3.178936074.178936095_tile_1
+2017-02-02 12:24:17,693 [main] INFO  org.petermac.pathos.pipeline.Canary - PIK3CA12.chr3.178938860.178938860_tile_1 has fwd rev matches to Off_target_2_PIK3CA12.chr3.178938860.178938860_tile_1-PIK3CA12.chr3.178938860.178938860_tile_1
+2017-02-02 12:24:17,697 [main] INFO  org.petermac.pathos.pipeline.Canary - PTEN13.chr10.89720716.89720852_tile_1 has fwd rev matches to Off_target_4_PTEN13.chr10.89720716.89720852_tile_1-PTEN13.chr10.89720716.89720852_tile_1
+2017-02-02 12:24:17,700 [main] INFO  org.petermac.pathos.pipeline.Canary - Using 212 Amplicons
+2017-02-02 12:24:34,890 [main] WARN  org.petermac.pathos.pipeline.Canary - Maximum estimated read limit reached: 39242 read pairs
+2017-02-02 12:24:34,947 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
+2017-02-02 12:24:35,217 [main] INFO  org.petermac.pathos.pipeline.Canary - Found 46 events
+2017-02-02 12:24:35,244 [main] INFO  org.petermac.pathos.pipeline.Canary - Found 44 variants
+2017-02-02 12:24:35,895 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Mutalyzer: No Proxy set
+2017-02-02 12:24:35,895 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Mutalyzer: No Proxy set
+2017-02-02 12:24:35,918 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
+2017-02-02 12:24:35,922 [main] INFO  org.petermac.pathos.pipeline.MutalyzerUtil - Loaded 44 variants from out.canary.vcf
+2017-02-02 12:24:38,478 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Job running: retrieve with: https://mutalyzer.nl/batch-job-result/batch-job-cb0102b0-8f58-4f40-8ac3-1153595948d5.txt
+2017-02-02 12:24:48,879 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Job running: retrieve with: https://mutalyzer.nl/batch-job-result/batch-job-3cee73f1-7346-4f8b-9ddf-29c23c8689e8.txt
+2017-02-02 12:25:02,207 [main] INFO  org.petermac.pathos.pipeline.MutalyzerUtil - Found 0 redesignated variants
+2017-02-02 12:25:02,260 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
+2017-02-02 12:25:02,382 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
+2017-02-02 12:25:02,483 [main] INFO  org.petermac.pathos.pipeline.MutalyzerUtil - convertVcf(out.canary.vcf): In 44 Out 44
+2017-02-02 12:25:02,518 [main] INFO  org.petermac.pathos.pipeline.Canary - Done: processed 313944 lines 39243 read pairs into out.canary.vcf in 45 seconds
+2017-02-02 12:26:22,745 [main] INFO  org.petermac.pathos.pipeline.Canary - Canary [--mutalyzer, https://mutalyzer.nl, --amplicon, /usr/local/dev/Canary/Amplicon/amplicon.fa, --primers, /usr/local/dev/Canary/Amplicon/amplicon.primers.tsv, --transcript, /usr/local/dev/Canary/etc/transcript.tsv, --columns, /usr/local/dev/Canary/etc/cols, --reads, 100, --complex, --output, out.canary.tsv, --vcf, out.canary.vcf, --bam, out.canary.bam, --normalise, out.norm.vcf, --tsv, out.norm.tsv, /usr/local/dev/Canary/Fastq/14M6168_AACCCCTC-TAGACCTA_L001_R1_001.fastq.gz, /usr/local/dev/Canary/Fastq/14M6168_AACCCCTC-TAGACCTA_L001_R2_001.fastq.gz]
+2017-02-02 12:26:23,089 [main] INFO  org.petermac.pathos.pipeline.Canary - Loaded 14808 gene/transcripts from /usr/local/dev/Canary/etc/transcript.tsv
+2017-02-02 12:26:23,121 [main] INFO  org.petermac.util.SmithWaterman - Loading SmithWaterman JNI Library from /usr/local/dev/Canary/lib/libsswjni.jnilib
+2017-02-02 12:26:23,164 [main] INFO  org.petermac.pathos.pipeline.Canary - Found Reads file: readlen=150 filesize=30495012 estimated reads=392429
+2017-02-02 12:26:23,172 [main] INFO  org.petermac.pathos.pipeline.Canary - Found 221 Amplicons
+2017-02-02 12:26:23,380 [main] INFO  org.petermac.pathos.pipeline.Canary - PIK3CA4_11.chr3.178936074.178936095_tile_1 has fwd rev matches to Off_target_1_PIK3CA4_11.chr3.178936074.178936095_tile_1-PIK3CA4_11.chr3.178936074.178936095_tile_1
+2017-02-02 12:26:23,380 [main] INFO  org.petermac.pathos.pipeline.Canary - PIK3CA12.chr3.178938860.178938860_tile_1 has fwd rev matches to Off_target_2_PIK3CA12.chr3.178938860.178938860_tile_1-PIK3CA12.chr3.178938860.178938860_tile_1
+2017-02-02 12:26:23,385 [main] INFO  org.petermac.pathos.pipeline.Canary - PTEN13.chr10.89720716.89720852_tile_1 has fwd rev matches to Off_target_4_PTEN13.chr10.89720716.89720852_tile_1-PTEN13.chr10.89720716.89720852_tile_1
+2017-02-02 12:26:23,389 [main] INFO  org.petermac.pathos.pipeline.Canary - Using 212 Amplicons
+2017-02-02 12:28:50,015 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
+2017-02-02 12:28:50,108 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr19:g.3121036_3121043delinsAGTGGACA
+2017-02-02 12:28:50,170 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578375_7578389delinsTCATGGTGGGGGCAGCGC
+2017-02-02 12:28:50,271 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578368_7578389delinsCATGGTGGGGGCAGCGC
+2017-02-02 12:28:50,308 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.37881338_37881365delinsGACGCTCTTCCGA
+2017-02-02 12:28:50,355 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr13:g.28610183_28610190delinsGTAGAAAG
+2017-02-02 12:28:50,567 [main] INFO  org.petermac.pathos.pipeline.Canary - Found 133 events
+2017-02-02 12:28:50,611 [main] INFO  org.petermac.pathos.pipeline.Canary - Found 122 variants
+2017-02-02 12:28:53,173 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Mutalyzer: No Proxy set
+2017-02-02 12:28:53,173 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Mutalyzer: No Proxy set
+2017-02-02 12:28:53,198 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr13:g.28610183_28610190delinsGTAGAAAG
+2017-02-02 12:28:53,199 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578368_7578389delinsCATGGTGGGGGCAGCGC
+2017-02-02 12:28:53,200 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
+2017-02-02 12:28:53,203 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.37881338_37881365delinsGACGCTCTTCCGA
+2017-02-02 12:28:53,215 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr19:g.3121036_3121043delinsAGTGGACA
+2017-02-02 12:28:53,218 [main] INFO  org.petermac.pathos.pipeline.MutalyzerUtil - Loaded 122 variants from out.canary.vcf
+2017-02-02 12:28:55,882 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Job running: retrieve with: https://mutalyzer.nl/batch-job-result/batch-job-4a18f1cf-b335-42ad-944f-00bff2c40811.txt
+2017-02-02 12:29:09,414 [main] WARN  org.petermac.pathos.pipeline.Transcript - Multiple transcripts found for variant chr1:g.115256625_115256628del filtered [NM_002524.4:c.112-29_112-26del, NM_007158.5:c.*4162_*4165del] choosing NM_002524.4:c.112-29_112-26del
+2017-02-02 12:29:09,426 [main] WARN  org.petermac.pathos.pipeline.Transcript - Multiple transcripts found for variant chr4:g.1808406G>T filtered [NM_012318.2:c.*7745C>A, NM_000142.4:c.2164G>T] choosing NM_000142.4:c.2164G>T
+2017-02-02 12:29:09,447 [main] WARN  org.petermac.pathos.pipeline.Transcript - Multiple transcripts found for variant chr11:g.534355C>T filtered [NM_176795.3:c.-33G>A, NM_198075.3:c.-3672C>T] choosing NM_176795.3:c.-33G>A
+2017-02-02 12:29:09,494 [main] WARN  org.petermac.pathos.pipeline.Transcript - Multiple transcripts found for variant chr17:g.37881026T>G filtered [NM_004448.2:c.2355T>G, NM_032339.3:c.*4749A>C] choosing NM_004448.2:c.2355T>G
+2017-02-02 12:29:09,495 [main] WARN  org.petermac.pathos.pipeline.Transcript - Multiple transcripts found for variant chr17:g.37881338_37881340del filtered [NM_004448.2:c.2530_2532del, NM_032339.3:c.*4435_*4437del] choosing NM_004448.2:c.2530_2532del
+2017-02-02 12:29:09,496 [main] WARN  org.petermac.pathos.pipeline.Transcript - Multiple transcripts found for variant chr17:g.37881338_37881365delinsGACGCTCTTCCGA filtered [NM_004448.2:c.2530_2557delinsGACGCTCTTCCGA, NM_032339.3:c.*4410_*4437delinsTCGGAAGAGCGTC] choosing NM_004448.2:c.2530_2557delinsGACGCTCTTCCGA
+2017-02-02 12:29:09,497 [main] WARN  org.petermac.pathos.pipeline.Transcript - Multiple transcripts found for variant chr17:g.37881343_37881348del filtered [NM_004448.2:c.2535_2540del, NM_032339.3:c.*4427_*4432del] choosing NM_004448.2:c.2535_2540del
+2017-02-02 12:29:09,498 [main] WARN  org.petermac.pathos.pipeline.Transcript - Multiple transcripts found for variant chr17:g.37881354_37881359del filtered [NM_004448.2:c.2546_2551del, NM_032339.3:c.*4416_*4421del] choosing NM_004448.2:c.2546_2551del
+2017-02-02 12:29:09,499 [main] WARN  org.petermac.pathos.pipeline.Transcript - Multiple transcripts found for variant chr17:g.37881361G>T filtered [NM_004448.2:c.2553G>T, NM_032339.3:c.*4414C>A] choosing NM_004448.2:c.2553G>T
+2017-02-02 12:29:09,500 [main] WARN  org.petermac.pathos.pipeline.Transcript - Multiple transcripts found for variant chr17:g.37881363T>C filtered [NM_004448.2:c.2555T>C, NM_032339.3:c.*4412A>G] choosing NM_004448.2:c.2555T>C
+2017-02-02 12:29:09,501 [main] WARN  org.petermac.pathos.pipeline.Transcript - Multiple transcripts found for variant chr17:g.37881365G>A filtered [NM_004448.2:c.2557G>A, NM_032339.3:c.*4410C>T] choosing NM_004448.2:c.2557G>A
+2017-02-02 12:29:09,502 [main] WARN  org.petermac.pathos.pipeline.Transcript - Multiple transcripts found for variant chr17:g.37881368A>T filtered [NM_004448.2:c.2560A>T, NM_032339.3:c.*4407T>A] choosing NM_004448.2:c.2560A>T
+2017-02-02 12:29:09,503 [main] WARN  org.petermac.pathos.pipeline.Transcript - Multiple transcripts found for variant chr17:g.37881372del filtered [NM_004448.2:c.2564del, NM_032339.3:c.*4403del] choosing NM_004448.2:c.2564del
+2017-02-02 12:29:09,504 [main] WARN  org.petermac.pathos.pipeline.Transcript - Multiple transcripts found for variant chr17:g.37881375_37881382del filtered [NM_004448.2:c.2567_2574del, NM_032339.3:c.*4393_*4400del] choosing NM_004448.2:c.2567_2574del
+2017-02-02 12:29:09,504 [main] WARN  org.petermac.pathos.pipeline.Transcript - Multiple transcripts found for variant chr17:g.37881384_37881392del filtered [NM_004448.2:c.2576_2584del, NM_032339.3:c.*4383_*4391del] choosing NM_004448.2:c.2576_2584del
+2017-02-02 12:29:09,508 [main] WARN  org.petermac.pathos.pipeline.Transcript - Multiple transcripts found for variant chr22:g.24176364G>T filtered [NM_198440.3:c.*2883C>A, NM_003073.3:c.1155G>T] choosing NM_003073.3:c.1155G>T
+2017-02-02 12:29:11,607 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Job running: retrieve with: https://mutalyzer.nl/batch-job-result/batch-job-a65bfeda-4ef2-4543-9255-bdb58086027d.txt
+2017-02-02 12:29:25,291 [main] INFO  org.petermac.pathos.pipeline.MutalyzerUtil - Found 3 redesignated variants
+2017-02-02 12:29:27,399 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Job running: retrieve with: https://mutalyzer.nl/batch-job-result/batch-job-d6dfdd22-4fed-4bbe-930a-0f216052bb43.txt
+2017-02-02 12:29:35,479 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr13:g.28610183_28610190delinsGTAGAAAG
+2017-02-02 12:29:35,481 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578368_7578389delinsCATGGTGGGGGCAGCGC
+2017-02-02 12:29:35,481 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
+2017-02-02 12:29:35,483 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.37881338_37881365delinsGACGCTCTTCCGA
+2017-02-02 12:29:35,486 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr19:g.3121036_3121043delinsAGTGGACA
+2017-02-02 12:29:35,677 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr13:g.28610183_28610190delinsGTAGAAAG
+2017-02-02 12:29:35,678 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578368_7578389delinsCATGGTGGGGGCAGCGC
+2017-02-02 12:29:35,678 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
+ERROR 12:29:37,315 CallSiteArray - Exiting: Error running GATK org.broadinstitute.gatk.utils.exceptions.UserException$CouldNotReadInputFile: Couldn't read file /config/binaries/gatk/maria.doyle_petermac.org.key because /config/binaries/gatk/maria.doyle_petermac.org.key (No such file or directory) 
+ERROR 12:29:37,317 CallSiteArray - Couldn't get bases for 17:7578390-7578390 
+ERROR 12:29:37,317 CallSiteArray - Couldn't find reference bases for chr17:g.7578390dup 
