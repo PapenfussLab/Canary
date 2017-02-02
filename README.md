@@ -103,8 +103,6 @@ There are a number of files that make Canary work. These are referenced in the `
 
 The location of logging can be configured by editing the properties file `lib/log4j.properties`.
 
-When using the `--normalise` flag, Canary will need access to a full reference genome FASTA file for correctly annotation 3' shifted variants. The location of this file is set by the properties file located in `etc/canary.properties`. Update the `genome.path` property to point to the genome reference. These can be obtained from [1000g](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/) for various genome builds.
-
 The amplicons generating the reads need to be described to Canary with two files. A fasta file (see `Amplicon/amplicon.fa`) containing the genomic sequences of the amplicons including primers. A second tab-delimited file describing the genomic position of the amplicons is required with the following format. (see `Amplicon/amplicon.primers.tsv`)
 
 | Column | Description | Example |
@@ -113,6 +111,10 @@ The amplicons generating the reads need to be described to Canary with two files
 |2|Length of start primer (bp)|24 |
 |3|Length of end primer (bp)|26|
 |4|Name of amplicon (Off target amplicons must start with "Off")|MPL1_2.chr1.43815008.43815009_tile_1|
+
+When using the `--normalise` flag, Canary will need access to a full reference genome FASTA file for correctly annotation 3' shifted variants. The location of this file is set by the properties file located in `etc/canary.properties`. Update the `genome.path` property to point to the genome reference. These can be obtained from [1000g](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/) for various genome builds.
+
+When using the `--tsv` flag, a tab separated variable file is generated to expand out all VCF Info and Format fields as a tabular file. The fields to be rendered as a TSV file can be selected by using the `--cols` flag and providing a file of VCF field names to output to TSV. One per line with an optional alias after a comma if VCF field names needs to be renamed in the TSV header. (see [cols](https://github.com/PapenfussLab/Canary/blob/master/src/etc/cols)).
 
 ## Contact
 Ken Doig, Bioinformatics, Cancer Research Department, Data Scientist, Molecular Pathology Department
