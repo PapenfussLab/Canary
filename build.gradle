@@ -93,7 +93,7 @@ copyEtc <<
 {
     def etcpath = pathospath + '/etc'
     println "Deploying Files to " + etcpath
-    ant.copy( toDir: etc, Filtering: true )
+    ant.copy( toDir: etcpath, Filtering: true )
     {
         filterchain()
         {

@@ -31,6 +31,7 @@ This repository contains a pre-built uber-jar bundling all dependencies for Cana
 If you are more adventurous, the repository also contains all the dependencies (listed below) to build Canary. From the install directory, run:
 
 	% export CANARY_HOME=/canary/target/dir   # replace with where you want to install Canary - must be absolute path - starts with '/'
+	% mkdir -p $CANARY_HOME
 	% gradle uploadArchives
 	% PATH=$CANARY_HOME/bin:$PATH
 
