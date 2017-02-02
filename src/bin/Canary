@@ -9,6 +9,6 @@ JAVA_OPTS="-XX:-UseSplitVerifier \
 -Dpathos.home=$CANARY_HOME \
 -Dpathos_mutalyzer_waittime=1000 \
 -Dgenome.path=xxx \
--Dlog4j.configuration=file:$CANARY_HOME/lib/log4j.properties"
+-Dlog4j.configuration=file:$CANARY_HOME/etc/log4j.properties"
 
 java $JAVA_OPTS -cp ${CANARY_HOME}/lib/Canary-all-1.0.0.jar org.petermac.pathos.pipeline.Canary $*
