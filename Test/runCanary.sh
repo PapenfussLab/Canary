@@ -14,7 +14,7 @@ $CANARY_HOME/bin/Canary	\
 		--primers    $CANARY_HOME/Amplicon/amplicon.primers.tsv \
 		--transcript $CANARY_HOME/etc/transcript.tsv \
 		--columns    $CANARY_HOME/etc/cols \
-		--reads      100 \
+		--reads      10 \
 		--complex	    \
 		--output     out.canary.tsv \
 		--vcf        out.canary.vcf \

@@ -15,11 +15,11 @@ version = '1.0.0'
 
 //  PathOS core JAR version
 //
-def pa_version = '1.2.2'
+def pa_version = '1.3'
 
 //  Get install root from PATHOS_HOME environment variable
 //
-def pathospath = System.getenv().get("PATHOS_HOME")
+def pathospath = System.getenv().get("CANARY_HOME")
 def libpath    = pathospath + '/lib'
 
 repositories {
@@ -99,7 +99,7 @@ copyBin <<
         {
             replacetokens()
             {
-                token(key: "GRADLE_PATHOS_HOME", value: pathospath)
+                token(key: "CANARY_HOME", value: pathospath)
             }
         }
         fileset(dir: 'src/bin')
@@ -126,7 +126,7 @@ dependencies
 { 
     compile group: 'org.codehaus.groovy' ,name: 'groovy-all', version: '2.1.9'
 
-    compile files( fileTree(dir: '../PathosCore/build/libs', includes: ["PathosCore-all-${pa_version}.jar"]))
+    compile files( fileTree(dir: './repos', includes: ["PathosCore-all-${pa_version}.jar"]))
 }
 
 //  Optional JAR settings

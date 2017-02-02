@@ -30,38 +30,20 @@ This repository contains a pre-built uber-jar bundling all dependencies for Cana
 
 If you are more adventurous, the repository also contains all the dependencies (listed below) to build Canary. From the install directory, run:
 
-	% cd /canary/install/dir
-	% gradle build
+	% CANARY_HOME=</canary/target/dir>   # replace with where you want to install Canary
+	% gradle uploadArchives
 
 There are a number of dependencies including the following
 - Java JDK 1.7 from [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html)
 - Groovy 2.1.9 from [here](http://groovy-lang.org/download.html)
 - Gradle for building Canary (we use 1.10 at time of writing) [Gradle 1.10](https://services.gradle.org/distributions/gradle-1.10-bin.zip)
 - Genome Analysis Toolkit (Currently GATK 3.3) and the Sting utility JAR (currently 2.1.8) available from [here](https://software.broadinstitute.org/gatk/download/)
-- The PathOS Core library available from [here](https://github.com/PapenfussLab/PathOS/releases/v1.2.3)
+- The PathOS Core library available from [PathosCore-all-1.3.jar](https://github.com/PapenfussLab/Canary/blob/master/repos/PathosCore-all-1.3.jar) and maintained [here](https://github.com/PapenfussLab/PathOS). 
 - JNI wrapper to the striped Smith-Waterman alignment library SSW see [here](https://github.com/mengyao/Complete-Striped-Smith-Waterman-Library)
 
 ## Example Data
 The `Test` directory contains an example shell script `runCanary.sh` for running Canary against sample FASTQ reads files in the `Fastq` directory. These reads were generated on 
 an Illumina MiSeq platform using the TruSeq assay, a 48 gene, targeted cancer amplicon panel from Illumina. The seqencing yielded 771,606 reads for this sample of which 93.5% were mapped to the amplicons at a coverage of ~1000X.
-
-Typical paramreters for Canary:
-
-	% Canary	\
-		--mutalyzer 'https://mutalyzer.nl' \
-		--amplicon   $CANARY_HOME/Amplicon/amplicon.fa \
-		--primers    $CANARY_HOME/Amplicon/amplicon.primers.tsv \
-		--transcript $CANARY_HOME/etc/transcript.tsv \
-		--columns    $CANARY_HOME/etc/cols \
-		--reads      10 \
-		--complex	    \
-		--output     out.canary.tsv \
-		--vcf        out.canary.vcf \
-		--bam        out.canary.bam \
-		--normalise  out.norm.vcf   \
-		--tsv        out.norm.tsv   \
-		$CANARY_HOME/Fastq/*R1_001.fastq.gz   \
-		$CANARY_HOME/Fastq/*R2_001.fastq.gz
 
 To run test data:
 
@@ -93,6 +75,24 @@ To run test data:
     2017-02-02 11:08:34,521 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
     2017-02-02 11:08:34,622 [main] INFO  org.petermac.pathos.pipeline.MutalyzerUtil - convertVcf(out.canary.vcf): In 44 Out 44
     2017-02-02 11:08:34,656 [main] INFO  org.petermac.pathos.pipeline.Canary - Done: processed 313944 lines 39243 read pairs into out.canary.vcf in 52 seconds
+
+Typical paramreters for Canary:
+
+	% Canary	\
+		--mutalyzer 'https://mutalyzer.nl' \
+		--amplicon   $CANARY_HOME/Amplicon/amplicon.fa \
+		--primers    $CANARY_HOME/Amplicon/amplicon.primers.tsv \
+		--transcript $CANARY_HOME/etc/transcript.tsv \
+		--columns    $CANARY_HOME/etc/cols \
+		--reads      10 \
+		--complex	    \
+		--output     out.canary.tsv \
+		--vcf        out.canary.vcf \
+		--bam        out.canary.bam \
+		--normalise  out.norm.vcf   \
+		--tsv        out.norm.tsv   \
+		$CANARY_HOME/Fastq/*R1_001.fastq.gz   \
+		$CANARY_HOME/Fastq/*R2_001.fastq.gz
 
 ## Configuration
 
