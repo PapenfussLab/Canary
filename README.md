@@ -46,19 +46,8 @@ There are a number of dependencies including the following
 The `Test` directory contains an example shell script `runCanary.sh` for running Canary against sample FASTQ reads files in the `Fastq` directory. These reads were generated on 
 an Illumina MiSeq platform using the TruSeq assay, a 48 gene, targeted cancer amplicon panel from Illumina. The seqencing yielded 771,606 reads for this sample of which 93.5% were mapped to the amplicons at a coverage of ~1000X.
 
-The amplicons generating the reads need to be described to Canary with two files. A fasta file (see `Amplicon/amplicon.fa`) containing the genomic sequences of the amplicons including primers. A second tab-delimited file describing the genomic position of the amplicons is required with the following format. (see `Amplicon/amplicon.primers.tsv`)
-| Column | Description | Example |
-| --- | --- | --- |
-|1|Genomic coordinates of amplicon (including primers)|1:43814982-43815163|
-|2|Length of start primer (bp)|24 |
-|3|Length of end primer (bp)|26|
-|4|Name of amplicon (Off target amplicons must start with "Off")|MPL1_2.chr1.43815008.43815009_tile_1|
-
-Both the genomic coordinates and the genomic sequences of the amplicons is required for situations where the reference genome may not match the primer sequences.
-
 Typical paramreters for Canary:
 
-    <blockquote>
 	% Canary	\
 		--mutalyzer 'https://mutalyzer.nl' \
 		--amplicon   $CANARY_HOME/Amplicon/amplicon.fa \
@@ -74,11 +63,9 @@ Typical paramreters for Canary:
 		--tsv        out.norm.tsv   \
 		$CANARY_HOME/Fastq/*R1_001.fastq.gz   \
 		$CANARY_HOME/Fastq/*R2_001.fastq.gz
-    </blockquote>
 
 To run test data:
 
-    <blockquote>
 	% cd /canary/install/dir
 	% cd Test
 	% runCanary.sh
@@ -107,7 +94,6 @@ To run test data:
     2017-02-02 11:08:34,521 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
     2017-02-02 11:08:34,622 [main] INFO  org.petermac.pathos.pipeline.MutalyzerUtil - convertVcf(out.canary.vcf): In 44 Out 44
     2017-02-02 11:08:34,656 [main] INFO  org.petermac.pathos.pipeline.Canary - Done: processed 313944 lines 39243 read pairs into out.canary.vcf in 52 seconds
-    </blockquote>
 
 ## Configuration
 
@@ -118,6 +104,7 @@ The location of logging can be configured by editing the properties file `lib/lo
 When using the `--normalise` flag, Canary will need access to a full reference genome FASTA file for correctly annotation 3' shifted variants. The location of this file is set by the properties file located in `etc/canary.properties`. Update the `genome.path` property to point to the genome reference. These can be obtained from [1000g](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/) for various genome builds.
 
 The amplicons generating the reads need to be described to Canary with two files. A fasta file (see `Amplicon/amplicon.fa`) containing the genomic sequences of the amplicons including primers. A second tab-delimited file describing the genomic position of the amplicons is required with the following format. (see `Amplicon/amplicon.primers.tsv`)
+
 | Column | Description | Example |
 | --- | --- | --- |
 |1|Genomic coordinates of amplicon (including primers)|1:43814982-43815163|
