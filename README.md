@@ -29,10 +29,9 @@ It is implemented in Groovy (a Java byte compatible language) and runs on any co
 This repository contains a pre-built uber-jar bundling all dependencies for Canary. Cloning the repository will download the [uber-jar](https://github.com/PapenfussLab/Canary/blob/master/lib/Canary-all-1.0.0.jar) ready for running the [example data](https://github.com/PapenfussLab/Canary#example-data).
 
 If you are more adventurous, the repository also contains all the dependencies (listed below) to build Canary. From the install directory, run:
-    <blockquote>
+
 	% cd /canary/install/dir
 	% gradle build
-    </blockquote>
 
 There are a number of dependencies including the following
 - Java JDK 1.7 from [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html)
