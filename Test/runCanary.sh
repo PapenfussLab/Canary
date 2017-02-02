@@ -3,12 +3,7 @@
 #	Run Canary for testing
 #
 
-##
-##	Set to Canary install directory
-##
-CANARY_HOME=/usr/local/dev/Canary
-
-$CANARY_HOME/bin/Canary	\
+./Canary	\
 		--mutalyzer 'https://mutalyzer.nl' \
 		--amplicon   $CANARY_HOME/Amplicon/amplicon.fa \
 		--primers    $CANARY_HOME/Amplicon/amplicon.primers.tsv \

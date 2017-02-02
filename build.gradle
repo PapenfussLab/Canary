@@ -84,6 +84,32 @@ copyJars <<
 }
 
 //
+//  Copy etc config files
+//
+task copyEtc
+uploadArchives.dependsOn copyEtc
+
+copyEtc <<
+{
+    def etcpath = pathospath + '/etc'
+    println "Deploying Files to " + etcpath
+    ant.copy( toDir: etc, Filtering: true )
+    {
+        filterchain()
+        {
+            replacetokens()
+            {
+                token(key: "CANARY_HOME", value: pathospath)
+            }
+        }
+        fileset(dir: 'src/etc')
+        {
+            include(name: '*')
+        }
+    }
+}
+
+//
 //  Copy CLI launch scripts to bin
 //
 task copyBin
