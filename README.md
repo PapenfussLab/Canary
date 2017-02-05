@@ -45,6 +45,8 @@ There are a number of dependencies including the following
 - The PathOS Core library available from [PathosCore-all-1.3.jar](https://github.com/PapenfussLab/Canary/blob/master/repos/PathosCore-all-1.3.jar) and maintained [here](https://github.com/PapenfussLab/PathOS). 
 - JNI wrapper to the striped Smith-Waterman alignment library SSW see [here](https://github.com/mengyao/Complete-Striped-Smith-Waterman-Library)
 
+Note that using `--normalise` flag, will also require loading a reference genome (see [here](https://github.com/PapenfussLab/Canary#configuration))
+
 ## Example Data
 The `Test` directory contains an example shell script `runCanary.sh` for running Canary against sample FASTQ reads files in the `Fastq` directory. These reads were generated on 
 an Illumina MiSeq platform using the TruSeq assay, a 48 gene, targeted cancer amplicon panel from Illumina. The seqencing yielded 771,606 reads for this sample of which 93.5% were mapped to the amplicons at a coverage of ~1000X.

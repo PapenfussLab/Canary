@@ -108,10 +108,11 @@ class Canary
             f(      longOpt: 'flank',      args: 1, 'Size of flanking region (bp) [5]' )
             fastq(  longOpt: 'fastq',      args: 1, 'Optional FASTQ output files prefix' )
             maxmut( longOpt: 'maxmut',     args: 1, 'Maximum number of mutations allowed per read pair [10]' )
+            mut(    longOpt: 'mutalyzer',  args: 1, 'Mutalyzer annotation server host [https://mutalyzer.nl]' )
             r(      longOpt: 'reads',      args: 1, 'Percent of reads to process [100]' )
-            c(      longOpt: 'complex',           'Coalesce complex events aka MNPs' )
-            n(      longOpt: 'nocache',           'Dont use read cache' )
-            ver(    longOpt: 'version',           'Display Canary version and exit' )
+            c(      longOpt: 'complex',             'Coalesce complex events aka MNPs' )
+            n(      longOpt: 'nocache',             'Dont use read cache' )
+            ver(    longOpt: 'version',             'Display Canary version and exit' )
             b(      longOpt: 'bam',        args: 1, 'Optional BAM file of alignment' )
             minpair(longOpt: 'minpair',    args: 1, 'Min read pairs for variants [10]' )
             vaf(    longOpt: 'vaf',        args: 1, 'Minimum VAF for variants [3.0%]' )
@@ -364,7 +365,7 @@ class Canary
 
             //  Annotate with HGVS nomenclature and 3' shift all variants in the VCF
             //
-            NormaliseVcf.normaliseVcfFile( vcffile, normf, tsMap )
+            NormaliseVcf.normaliseVcfFile( vcffile, normf, tsMap, opt.mutalyzer ?: 'https://mutalyzer.nl' )
 
             //  use the annotated VCF if we are outputting a TSV file
             //

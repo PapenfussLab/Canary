@@ -18,5 +18,5 @@ Canary	\
 		--bam        out.canary.bam \
 		--normalise  out.norm.vcf   \
 		--tsv        out.norm.tsv   \
-		$RUNDIR/Fastq/*R1_001.fastq.gz   \
-		$RUNDIR/Fastq/*R2_001.fastq.gz
+		$RUNDIR/../Fastq/*R1_001.fastq.gz   \
+		$RUNDIR/../Fastq/*R2_001.fastq.gz
