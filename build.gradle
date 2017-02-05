@@ -80,6 +80,10 @@ copyJars <<
         {
             include(name: "Canary-all-${version}.jar")
         }
+        fileset(dir: './src/lib')
+        {
+            include(name: "libsswjni.jnilib")
+        }
     }
 }
 

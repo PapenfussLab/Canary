@@ -30,6 +30,8 @@ This repository contains a pre-built uber-jar bundling all dependencies for Cana
 
 If you are more adventurous, the repository also contains all the dependencies (listed below) to build Canary. From the install directory, run:
 
+	% git clone https://github.com/PapenfussLab/Canary.git
+	% cd Canary
 	% export CANARY_HOME=/canary/target/dir   # replace with where you want to install Canary - must be absolute path - starts with '/'
 	% mkdir -p $CANARY_HOME
 	% gradle uploadArchives
@@ -50,8 +52,8 @@ an Illumina MiSeq platform using the TruSeq assay, a 48 gene, targeted cancer am
 To run test data:
 
 	% export CANARY_HOME=/canary/target/dir   # replace with where you want to install Canary - must be absolute path - starts with '/'
-	% cd /canary/install/dir/Test             # subdirectory of cloned repository
-	% runCanary.sh
+	% cd Test                                 # subdirectory of cloned repository
+	% ./runCanary.sh
 
     2017-02-02 11:07:42,696 [main] INFO  org.petermac.pathos.pipeline.Canary - Canary [--mutalyzer, https://mutalyzer.nl, --amplicon, /usr/local/dev/Canary/Amplicon/amplicon.fa, --primers, /usr/local/dev/Canary/Amplicon/amplicon.primers.tsv, --transcript, /usr/local/dev/Canary/etc/transcript.tsv, --columns, /usr/local/dev/Canary/etc/cols, --reads, 10, --complex, --output, out.canary.tsv, --vcf, out.canary.vcf, --bam, out.canary.bam, --normalise, out.norm.vcf, --tsv, out.norm.tsv, /usr/local/dev/Canary/Fastq/14M6168_AACCCCTC-TAGACCTA_L001_R1_001.fastq.gz, /usr/local/dev/Canary/Fastq/14M6168_AACCCCTC-TAGACCTA_L001_R2_001.fastq.gz]
     2017-02-02 11:07:43,036 [main] INFO  org.petermac.pathos.pipeline.Canary - Loaded 14808 gene/transcripts from /usr/local/dev/Canary/etc/transcript.tsv
