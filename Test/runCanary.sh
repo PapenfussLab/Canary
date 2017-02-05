@@ -3,10 +3,12 @@
 #	Run Canary for testing
 #
 
-./Canary	\
+RUNDIR=`dirname $0`
+
+Canary	\
 		--mutalyzer 'https://mutalyzer.nl' \
-		--amplicon   $CANARY_HOME/Amplicon/amplicon.fa \
-		--primers    $CANARY_HOME/Amplicon/amplicon.primers.tsv \
+		--amplicon   $RUNDIR/../Amplicon/amplicon.fa \
+		--primers    $RUNDIR/../Amplicon/amplicon.primers.tsv \
 		--transcript $CANARY_HOME/etc/transcript.tsv \
 		--columns    $CANARY_HOME/etc/cols \
 		--reads      10 \
@@ -16,5 +18,5 @@
 		--bam        out.canary.bam \
 		--normalise  out.norm.vcf   \
 		--tsv        out.norm.tsv   \
-		$CANARY_HOME/Fastq/*R1_001.fastq.gz   \
-		$CANARY_HOME/Fastq/*R2_001.fastq.gz
+		$RUNDIR/Fastq/*R1_001.fastq.gz   \
+		$RUNDIR/Fastq/*R2_001.fastq.gz
