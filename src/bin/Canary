@@ -1,13 +1,4 @@
-#	Canary shell wrapper
-
-#	Set to install directory of Canary
-#
-CANARY_HOME=@CANARY_HOME@
-
-JAVA_OPTS="-XX:-UseSplitVerifier \
--Dpathos.config=$CANARY_HOME/etc/canary.properties \
--Dpathos.home=$CANARY_HOME \
--Dpathos_mutalyzer_waittime=1000 \
--Dlog4j.configuration=file:$CANARY_HOME/etc/log4j.properties"
-
-java $JAVA_OPTS -cp ${CANARY_HOME}/lib/Canary-all-1.0.0.jar org.petermac.pathos.pipeline.Canary $*
+. SetPathosEnv
+RUN=`basename $0`
+CP=`ls -1 ${PATHOS_HOME}/lib/Canary-all-*.jar | tail -1`
+java $JAVA_OPTS -cp $CP org.petermac.pathos.pipeline.$RUN $*

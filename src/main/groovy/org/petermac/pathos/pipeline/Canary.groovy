@@ -101,9 +101,9 @@ class Canary
         {
             h(      longOpt: 'help',		        'This help message' )
             d(      longOpt: 'debug',		        'Turn on debugging (Note: will generate large file of alignments [debug.out])' )
-            a(      longOpt: 'amplicon',   args: 1, 'Amplicon FASTA file' )
-            p(      longOpt: 'primers',    args: 1, 'Amplicon Primers file' )
-            v(      longOpt: 'vcf',        args: 1, 'Found variants VCF file' )
+            a(      longOpt: 'amplicon',   args: 1, required: true, 'Amplicon FASTA file [required]' )
+            p(      longOpt: 'primers',    args: 1, required: true, 'Amplicon Primers file [required]' )
+            v(      longOpt: 'vcf',        args: 1, 'Found variants VCF file [canary.vcf]' )
             o(      longOpt: 'output',     args: 1, 'Output report file' )
             f(      longOpt: 'flank',      args: 1, 'Size of flanking region (bp) [5]' )
             fastq(  longOpt: 'fastq',      args: 1, 'Optional FASTQ output files prefix' )
@@ -293,7 +293,9 @@ class Canary
 
         //  Create output VCF file
         //
-        File vcffile = new File(opt.vcf as String)
+        String vcfname = 'canary.vcf'
+        if ( opt.vcf ) vcfname = opt.vcf as String
+        File vcffile = new File( vcfname )
         if ( vcffile.exists())
             vcffile.delete()
 

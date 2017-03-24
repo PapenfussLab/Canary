@@ -26,12 +26,11 @@ Canary takes advantage of many open-source and public Java libraries to implemen
 It is implemented in Groovy (a Java byte compatible language) and runs on any computer with Java installed.
 
 ## Installation
-Canary can be installed via [Docker](https://www.docker.com/) with a single command:
+Canary can be installed with a single command via [Docker](https://www.docker.com/):
 
 	% docker run -v /tmp/data:/canary.data dockercanary/canary
 
-Docker supports many platforms such as Mac, Linux, Windows, Windows Server etc and allows Canary to be run without dependancy issues (apart from Docker).
-The first run will download and cache a dockerised Canary image built from the source code in this repository. 
+Docker can be downloaded and installed from [here](https://www.docker.com/) and supports many platforms such as Mac, Linux, Windows, Windows Server etc and allows Canary to be run without dependancy issues (apart from Docker).  The first run will download and cache a dockerised Canary image built from the source code in this repository. 
 
 The docker container itself is built from a Linux container which can be accessed directly at the shell level with:
 
