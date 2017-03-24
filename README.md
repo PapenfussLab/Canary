@@ -26,6 +26,17 @@ Canary takes advantage of many open-source and public Java libraries to implemen
 It is implemented in Groovy (a Java byte compatible language) and runs on any computer with Java installed.
 
 ## Installation
+Canary can be installed via [Docker](https://www.docker.com/) with a single command:
+
+	% docker run -v /tmp/data:/canary.data dockercanary/canary
+
+Docker supports many platforms such as Mac, Linux, Windows, Windows Server etc and allows Canary to be run without dependancy issues (apart from Docker).
+The first run will download and cache a dockerised Canary image built from the source code in this repository. 
+
+The docker container itself is built from a Linux container which can be accessed directly at the shell level with:
+
+	% docker run -it --entrypoint 'bash' dockercanary/canary
+
 This repository contains a pre-built uber-jar bundling all dependencies for Canary. Cloning the repository will download the [uber-jar](https://github.com/PapenfussLab/Canary/blob/master/lib/Canary-all-1.0.0.jar) ready for running the [example data](https://github.com/PapenfussLab/Canary#example-data).
 
 If you are more adventurous, the repository also contains all the dependencies (listed below) to build Canary. From the install directory, run:
@@ -48,40 +59,39 @@ There are a number of dependencies including the following
 Note that using `--normalise` flag, will also require loading a reference genome (see [here](https://github.com/PapenfussLab/Canary#configuration))
 
 ## Example Data
-The `Test` directory contains an example shell script `runCanary.sh` for running Canary against sample FASTQ reads files in the `Fastq` directory. These reads were generated on 
+The `/opt/Canary/bin` directory in the docker image contains an example shell script `runCanary.sh` for running Canary against sample FASTQ reads files in the `/opt/Canary/Fastq` directory. These reads were generated on 
 an Illumina MiSeq platform using the TruSeq assay, a 48 gene, targeted cancer amplicon panel from Illumina. The seqencing yielded 771,606 reads for this sample of which 93.5% were mapped to the amplicons at a coverage of ~1000X.
 
-To run test data:
+To run Canary with demo data, output goes to /tmp/data
+The first run will download the canary docker image from the docker repo
 
-	% export CANARY_HOME=/canary/target/dir   # replace with where you want to install Canary - must be absolute path - starts with '/'
-	% cd Test                                 # subdirectory of cloned repository
-	% ./runCanary.sh
+	% docker run -v /tmp/data:/canary.data dockercanary/canary
 
-    2017-02-02 11:07:42,696 [main] INFO  org.petermac.pathos.pipeline.Canary - Canary [--mutalyzer, https://mutalyzer.nl, --amplicon, /usr/local/dev/Canary/Amplicon/amplicon.fa, --primers, /usr/local/dev/Canary/Amplicon/amplicon.primers.tsv, --transcript, /usr/local/dev/Canary/etc/transcript.tsv, --columns, /usr/local/dev/Canary/etc/cols, --reads, 10, --complex, --output, out.canary.tsv, --vcf, out.canary.vcf, --bam, out.canary.bam, --normalise, out.norm.vcf, --tsv, out.norm.tsv, /usr/local/dev/Canary/Fastq/14M6168_AACCCCTC-TAGACCTA_L001_R1_001.fastq.gz, /usr/local/dev/Canary/Fastq/14M6168_AACCCCTC-TAGACCTA_L001_R2_001.fastq.gz]
-    2017-02-02 11:07:43,036 [main] INFO  org.petermac.pathos.pipeline.Canary - Loaded 14808 gene/transcripts from /usr/local/dev/Canary/etc/transcript.tsv
-    Using PathOS Configuration File [/usr/local/dev/Canary/etc/canary.properties] PathOS Home [.]
-    2017-02-02 11:07:43,068 [main] INFO  org.petermac.util.SmithWaterman - Loading SmithWaterman JNI Library from /usr/local/dev/Canary/lib/libsswjni.jnilib
-    2017-02-02 11:07:43,110 [main] INFO  org.petermac.pathos.pipeline.Canary - Found Reads file: readlen=150 filesize=30495012 estimated reads=392429
-    2017-02-02 11:07:43,119 [main] INFO  org.petermac.pathos.pipeline.Canary - Found 221 Amplicons
-    2017-02-02 11:07:43,335 [main] INFO  org.petermac.pathos.pipeline.Canary - PIK3CA4_11.chr3.178936074.178936095_tile_1 has fwd rev matches to Off_target_1_PIK3CA4_11.chr3.178936074.178936095_tile_1-PIK3CA4_11.chr3.178936074.178936095_tile_1
-    2017-02-02 11:07:43,336 [main] INFO  org.petermac.pathos.pipeline.Canary - PIK3CA12.chr3.178938860.178938860_tile_1 has fwd rev matches to Off_target_2_PIK3CA12.chr3.178938860.178938860_tile_1-PIK3CA12.chr3.178938860.178938860_tile_1
-    2017-02-02 11:07:43,340 [main] INFO  org.petermac.pathos.pipeline.Canary - PTEN13.chr10.89720716.89720852_tile_1 has fwd rev matches to Off_target_4_PTEN13.chr10.89720716.89720852_tile_1-PTEN13.chr10.89720716.89720852_tile_1
-    2017-02-02 11:07:43,342 [main] INFO  org.petermac.pathos.pipeline.Canary - Using 212 Amplicons
-    2017-02-02 11:08:00,800 [main] WARN  org.petermac.pathos.pipeline.Canary - Maximum estimated read limit reached: 39242 read pairs
-    2017-02-02 11:08:00,867 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
-    2017-02-02 11:08:01,143 [main] INFO  org.petermac.pathos.pipeline.Canary - Found 46 events
-    2017-02-02 11:08:01,170 [main] INFO  org.petermac.pathos.pipeline.Canary - Found 44 variants
-    2017-02-02 11:08:01,807 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Mutalyzer: No Proxy set
-    2017-02-02 11:08:01,807 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Mutalyzer: No Proxy set
-    2017-02-02 11:08:01,829 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
-    2017-02-02 11:08:01,833 [main] INFO  org.petermac.pathos.pipeline.MutalyzerUtil - Loaded 44 variants from out.canary.vcf
-    2017-02-02 11:08:05,581 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Job running: retrieve with: https://mutalyzer.nl/batch-job-result/batch-job-d8086e97-9a8d-49c2-9be3-59646a9e3210.txt
-    2017-02-02 11:08:20,916 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Job running: retrieve with: https://mutalyzer.nl/batch-job-result/batch-job-9bf359c8-a8cf-4656-97ee-83260d3c1dae.txt
-    2017-02-02 11:08:34,345 [main] INFO  org.petermac.pathos.pipeline.MutalyzerUtil - Found 0 redesignated variants
-    2017-02-02 11:08:34,401 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
-    2017-02-02 11:08:34,521 [main] INFO  org.petermac.pathos.pipeline.HGVS - Complex indel: chr17:g.7578373_7578395delinsGCTGCTCACCATCGCT
-    2017-02-02 11:08:34,622 [main] INFO  org.petermac.pathos.pipeline.MutalyzerUtil - convertVcf(out.canary.vcf): In 44 Out 44
-    2017-02-02 11:08:34,656 [main] INFO  org.petermac.pathos.pipeline.Canary - Done: processed 313944 lines 39243 read pairs into out.canary.vcf in 52 seconds
+To run Canary with longer demo data (~3 minutes), output goes to /tmp/data
+
+	% docker run -v /tmp/data:/canary.data -e CANARY_OPTS="LONG" dockercanary/canary
+
+	2017-03-24 01:48:52,440 [main] INFO  org.petermac.pathos.pipeline.Canary - Canary [--mutalyzer, https://mutalyzer.nl, --amplicon, /opt/Canary/Amplicon/amplicon.fa, --primers, /opt/Canary/Amplicon/amplicon.primers.tsv, --transcript, /opt/Canary/etc/transcript.tsv, --columns, /opt/Canary/etc/cols, --reads, 1, --normalise, canary.norm.vcf, --tsv, outvcf.tsv, --output, canary.tsv, --vcf, canary.vcf, --bam, canary.bam, /opt/Canary/Fastq/14M6168_AACCCCTC-TAGACCTA_L001_R1_001.fastq.gz, /opt/Canary/Fastq/14M6168_AACCCCTC-TAGACCTA_L001_R2_001.fastq.gz]
+	2017-03-24 01:48:52,836 [main] INFO  org.petermac.pathos.pipeline.Canary - Loaded 14808 gene/transcripts from /opt/Canary/etc/transcript.tsv
+	Using PathOS Configuration File [/opt/Canary/etc/canary.properties] PathOS Home [/opt/Canary]
+	2017-03-24 01:48:52,890 [main] INFO  org.petermac.util.SmithWaterman - Loading SmithWaterman JNI Library from /opt/Canary/lib/libsswjni.jnilib
+	2017-03-24 01:48:52,945 [main] INFO  org.petermac.pathos.pipeline.Canary - Found Reads file: readlen=150 filesize=30495012 estimated reads=392429
+	2017-03-24 01:48:52,963 [main] INFO  org.petermac.pathos.pipeline.Canary - Found 221 Amplicons
+	2017-03-24 01:48:53,198 [main] INFO  org.petermac.pathos.pipeline.Canary - PIK3CA4_11.chr3.178936074.178936095_tile_1 has fwd rev matches to Off_target_1_PIK3CA4_11.chr3.178936074.178936095_tile_1-PIK3CA4_11.chr3.178936074.178936095_tile_1
+	2017-03-24 01:48:53,198 [main] INFO  org.petermac.pathos.pipeline.Canary - PIK3CA12.chr3.178938860.178938860_tile_1 has fwd rev matches to Off_target_2_PIK3CA12.chr3.178938860.178938860_tile_1-PIK3CA12.chr3.178938860.178938860_tile_1
+	2017-03-24 01:48:53,204 [main] INFO  org.petermac.pathos.pipeline.Canary - PTEN13.chr10.89720716.89720852_tile_1 has fwd rev matches to Off_target_4_PTEN13.chr10.89720716.89720852_tile_1-PTEN13.chr10.89720716.89720852_tile_1
+	2017-03-24 01:48:53,208 [main] INFO  org.petermac.pathos.pipeline.Canary - Using 212 Amplicons
+	2017-03-24 01:48:56,023 [main] WARN  org.petermac.pathos.pipeline.Canary - Maximum estimated read limit reached: 3924 read pairs
+	2017-03-24 01:48:56,178 [main] INFO  org.petermac.pathos.pipeline.Canary - Found 18 events
+	2017-03-24 01:48:56,206 [main] INFO  org.petermac.pathos.pipeline.Canary - Found 18 variants
+	2017-03-24 01:49:20,385 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Mutalyzer: No Proxy set
+	2017-03-24 01:49:20,385 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Mutalyzer: No Proxy set
+	2017-03-24 01:49:20,416 [main] INFO  org.petermac.pathos.pipeline.MutalyzerUtil - Loaded 18 variants from canary.vcf
+	2017-03-24 01:49:24,261 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Job running: retrieve with: https://mutalyzer.nl/batch-job-result/batch-job-880e8efe-ed82-4327-826e-cfddca18bb12.txt
+	2017-03-24 01:49:35,992 [main] INFO  org.petermac.pathos.pipeline.Mutalyzer - Job running: retrieve with: https://mutalyzer.nl/batch-job-result/batch-job-ce7719c2-4224-40b9-9b7e-2dbfbc2fc413.txt
+	2017-03-24 01:49:49,739 [main] INFO  org.petermac.pathos.pipeline.MutalyzerUtil - Found 0 redesignated variants
+	2017-03-24 01:49:49,986 [main] INFO  org.petermac.pathos.pipeline.MutalyzerUtil - convertVcf(canary.vcf): In 18 Out 18
+	2017-03-24 01:49:50,115 [main] INFO  org.petermac.pathos.pipeline.Canary - Done: processed 31400 lines 3925 read pairs into canary.vcf in 57 seconds
 
 Typical parameters for Canary:
 
