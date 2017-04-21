@@ -61,12 +61,11 @@ Note that using `--normalise` flag, will also require loading a reference genome
 The `/opt/Canary/bin` directory in the docker image contains an example shell script `runCanary.sh` for running Canary against sample FASTQ reads files in the `/opt/Canary/Fastq` directory. These reads were generated on 
 an Illumina MiSeq platform using the TruSeq assay, a 48 gene, targeted cancer amplicon panel from Illumina. The seqencing yielded 771,606 reads for this sample of which 93.5% were mapped to the amplicons at a coverage of ~1000X.
 
-To run Canary with demo data, output goes to /tmp/data
-The first run will download the canary docker image from the docker repo
+To run Canary with demo data, output goes to `/tmp/data`.  The first run will download the canary docker image from the docker repo
 
 	% docker run -v /tmp/data:/canary.data dockercanary/canary
 
-To run Canary with longer demo data (~3 minutes), output goes to /tmp/data
+To run Canary with longer demo data (~3 minutes), output goes to `/tmp/data`
 
 	% docker run -v /tmp/data:/canary.data -e CANARY_OPTS="LONG" dockercanary/canary
 
