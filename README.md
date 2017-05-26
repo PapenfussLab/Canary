@@ -17,8 +17,9 @@ Canary is a clinically tested tool which performs the key pipeline tasks of:
 - calling of variants, 
 - 3' shifting, 
 - coalescing of MNPs (multi-nucleotide polymorphisms), 
-- Refseq transcript selection and 
-- rendering of variants into HGVS nomenclature. 
+- Refseq transcript selectionc$,
+- rendering of variants into HGVS nomenclature and
+- annotation of the VCF file with MyVariant.info attributes.
 
 ## Technology Platform
 Canary takes advantage of many open-source and public Java libraries to implement an enterprise-grade application suitable for clinical use.
@@ -32,7 +33,7 @@ Canary can be installed with a single command via [Docker](https://www.docker.co
 
 Docker can be downloaded and installed from [here](https://www.docker.com/) and supports many platforms such as Mac, Linux, Windows, Windows Server etc and allows Canary to be run without dependancy issues (apart from Docker).  The first run will download and cache a dockerised Canary image built from the source code in this repository. 
 
-The docker container itself is built from a Linux container which can be accessed directly at the shell level with:
+The docker container itself is built from a Linux image  which can be accessed directly at the shell level with:
 
 	% docker run -it --entrypoint 'bash' dockercanary/canary
 
@@ -105,6 +106,7 @@ Typical parameters for Canary:
 		--vcf        out.canary.vcf \
 		--bam        out.canary.bam \
 		--normalise  out.norm.vcf   \
+		--annotation myvariant.txt  \
 		--tsv        out.norm.tsv   \
 		$CANARY_HOME/Fastq/*R1_001.fastq.gz   \
 		$CANARY_HOME/Fastq/*R2_001.fastq.gz
