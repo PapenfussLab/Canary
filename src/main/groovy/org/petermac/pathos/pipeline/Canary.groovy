@@ -52,7 +52,9 @@ class Canary
     private static int              flank     = 5            // size of flanking region for regexs
     private static int              min_pairs = 10           // minimum number of read pairs for variants
     private static Double           min_vaf   = 3.0          // minimum VAF
-    private static int              maxMutations = 10        // maximum mutations for an alignment
+    private static int              maxMutations   = 10      // maximum mutations for an alignment
+    private static int              maxComplexSize = 30      // Maximum size of complex mutations
+    private static int              maxMnpGap      = 15      // Maximum size of inter mutation gap for complex mutations
 
     //  Read pair cache
     //
@@ -69,9 +71,6 @@ class Canary
     private final static int        MIN_OVERLAP         = 10      // minimum overlap required between read pairs
     private final static int        PRIMER_BASES        = 5       // extra primer bases to add to alignment. This allows
                                                                   // for bases modified as first or second base of actual read
-    private final static int        MAX_COMPLEX_MUT     = 30      // Maximum size of complex mutations
-    private final static int        INTER_MUT_MNP_GAP   = 15      // Maximum size of inter mutation gap for complex mutations
-
     //  BAM file writer (optional)
     //
     private static SAMFileWriter bamWriter = null
@@ -87,7 +86,7 @@ class Canary
      *
      * @param args
      */
-    static void main( args )
+    static void main( String[] args )
     {
         //	Collect and parse command line args
         //
@@ -111,6 +110,8 @@ class Canary
             mut(    longOpt: 'mutalyzer',  args: 1, 'Mutalyzer annotation server host [https://mutalyzer.nl]' )
             r(      longOpt: 'reads',      args: 1, 'Percent of reads to process [100]' )
             c(      longOpt: 'complex',             'Coalesce complex events aka MNPs' )
+            mnpmax( longOpt: 'mnpmax',     args: 1, 'Maximum size of complex mutations [30]' )
+            mnpgap( longOpt: 'mnpgap',     args: 1, 'Maximum size of inter mutation gap for complex mutations [15]' )
             n(      longOpt: 'nocache',             'Dont use read cache' )
             ver(    longOpt: 'version',             'Display Canary version and exit' )
             b(      longOpt: 'bam',        args: 1, 'Optional BAM file of alignment' )
@@ -123,15 +124,17 @@ class Canary
             ts(     longOpt: 'transcript', args: 1, 'File of transcripts mapping genes -> refseq (without version)' )
         }
 
-        def opt = cli.parse( args )
-        if ( ! opt ) return
-
-        if ( opt.version )
+        //  Check for version option first - ignore option parsing
+        //
+        if ( args.size() > 0 && (args[0] =~ '-ver' || args[0] =~ '--version' ))
         {
             println version()
             return
         }
-        
+
+        def opt = cli.parse( args )
+        if ( ! opt ) return
+
         if ( opt.help || opt.arguments().size() != 2 )
         {
             cli.usage()
@@ -272,6 +275,36 @@ class Canary
             else
             {
                 log.fatal( "Invalid variant allele frequency: ${vaf}")
+                return
+            }
+        }
+
+        //  Set maximum size for MNP mutations
+        //
+        if ( opt.mnpmax )
+        {
+            try
+            {
+                maxComplexSize = Integer.parseInt(opt.mnpmax)
+            }
+            catch ( Exception e )
+            {
+                log.fatal( "Number formatting error: ${opt.mnpmax} ${e}")
+                return
+            }
+        }
+
+        //  Set maximum gap size for MNP mutations
+        //
+        if ( opt.mnpgap )
+        {
+            try
+            {
+                maxMnpGap = Integer.parseInt(opt.mnpgap)
+            }
+            catch ( Exception e )
+            {
+                log.fatal( "Number formatting error: ${opt.mnpgap} ${e}")
                 return
             }
         }
@@ -1079,7 +1112,7 @@ class Canary
         //
         if ( complex && mmap.size() > 1 )
         {
-            Map cplx = sw.complex( fmt, MAX_COMPLEX_MUT, INTER_MUT_MNP_GAP )
+            Map cplx = sw.complex( fmt, maxComplexSize, maxMnpGap )
             if ( cplx )
             {
                 if ( debug ) debugfile << "## Complex MNP ${cplx.ref} -> ${cplx.alt} pos=${cplx.pos}\n"
