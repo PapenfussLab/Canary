@@ -20,6 +20,7 @@ import htsjdk.samtools.fastq.FastqWriter
 import htsjdk.samtools.fastq.FastqWriterFactory
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
+import org.petermac.annotate.MyVariant
 import org.petermac.util.Fasta
 import org.petermac.util.SmithWaterman
 import org.petermac.util.Vcf
@@ -52,9 +53,7 @@ class Canary
     private static int              flank     = 5            // size of flanking region for regexs
     private static int              min_pairs = 10           // minimum number of read pairs for variants
     private static Double           min_vaf   = 3.0          // minimum VAF
-    private static int              maxMutations   = 10      // maximum mutations for an alignment
-    private static int              maxComplexSize = 30      // Maximum size of complex mutations
-    private static int              maxMnpGap      = 15      // Maximum size of inter mutation gap for complex mutations
+    private static int              maxMutations = 10        // maximum mutations for an alignment
 
     //  Read pair cache
     //
@@ -71,6 +70,9 @@ class Canary
     private final static int        MIN_OVERLAP         = 10      // minimum overlap required between read pairs
     private final static int        PRIMER_BASES        = 5       // extra primer bases to add to alignment. This allows
                                                                   // for bases modified as first or second base of actual read
+    private final static int        MAX_COMPLEX_MUT     = 30      // Maximum size of complex mutations
+    private final static int        INTER_MUT_MNP_GAP   = 15      // Maximum size of inter mutation gap for complex mutations
+
     //  BAM file writer (optional)
     //
     private static SAMFileWriter bamWriter = null
@@ -110,8 +112,6 @@ class Canary
             mut(    longOpt: 'mutalyzer',  args: 1, 'Mutalyzer annotation server host [https://mutalyzer.nl]' )
             r(      longOpt: 'reads',      args: 1, 'Percent of reads to process [100]' )
             c(      longOpt: 'complex',             'Coalesce complex events aka MNPs' )
-            mnpmax( longOpt: 'mnpmax',     args: 1, 'Maximum size of complex mutations [30]' )
-            mnpgap( longOpt: 'mnpgap',     args: 1, 'Maximum size of inter mutation gap for complex mutations [15]' )
             n(      longOpt: 'nocache',             'Dont use read cache' )
             ver(    longOpt: 'version',             'Display Canary version and exit' )
             b(      longOpt: 'bam',        args: 1, 'Optional BAM file of alignment' )
@@ -122,6 +122,7 @@ class Canary
             cols(   longOpt: 'columns',    args: 1, 'File of VCF field names to output to TSV (one per line with optional alias after comma)' )
             norm(   longOpt: 'normalise',  args: 1, 'Generates annotated VCF file from VCF output' )
             ts(     longOpt: 'transcript', args: 1, 'File of transcripts mapping genes -> refseq (without version)' )
+            ano(    longOpt: 'annotation', args: 1, 'File of MyVariant annotation fields' )
         }
 
         //  Check for version option first - ignore option parsing
@@ -279,36 +280,6 @@ class Canary
             }
         }
 
-        //  Set maximum size for MNP mutations
-        //
-        if ( opt.mnpmax )
-        {
-            try
-            {
-                maxComplexSize = Integer.parseInt(opt.mnpmax)
-            }
-            catch ( Exception e )
-            {
-                log.fatal( "Number formatting error: ${opt.mnpmax} ${e}")
-                return
-            }
-        }
-
-        //  Set maximum gap size for MNP mutations
-        //
-        if ( opt.mnpgap )
-        {
-            try
-            {
-                maxMnpGap = Integer.parseInt(opt.mnpgap)
-            }
-            catch ( Exception e )
-            {
-                log.fatal( "Number formatting error: ${opt.mnpgap} ${e}")
-                return
-            }
-        }
-
         //  Extract file names
         //  Todo: support multiple pairs of read files from multiple flowcells eg NextSeq, HiSeq
         //  Todo: need to support Bzip2 files also
@@ -377,9 +348,23 @@ class Canary
             log.info( "Loaded ${tsMap.size()} gene/transcripts from ${tsf}")
         }
 
+        //  Annotation from MyVariants
+        //
+        List anoFields = []
+        if ( opt.annotation )
+        {
+            File anof = new File( opt.annotation as String )
+            if ( ! anof.exists())
+            {
+                log.error( "Can't read annotation file: ${opt.annotation}")
+                System.exit(1)
+            }
+            anoFields = anof.readLines()
+        }
+
         //  Run it all
         //
-        int nlines = new Canary().runCanary( ampfile, opt.filter ?: '', primfile, rows, ofile, vcffile, r1file, r2file, pctreads )
+        int nlines = new Canary().runCanary( ampfile, opt.filter ?: '', primfile, rows, ofile, vcffile, r1file, r2file, pctreads, anoFields )
 
         //  Close BAM/FASTQ files
         //
@@ -450,7 +435,7 @@ class Canary
      * @param pct       Number of lines processed
      * @return
      */
-    int runCanary( File ampfile, String amplist, File primfile, List<List> vars, File ofile, File vcffile, File r1, File r2, Double pct )
+    int runCanary( File ampfile, String amplist, File primfile, List<List> vars, File ofile, File vcffile, File r1, File r2, Double pct, List anoFields )
     {
         //  Calculate read file stats
         //
@@ -483,7 +468,7 @@ class Canary
 
         //  Output a VCF file of variants
         //
-        outputVcf( variants, vcffile )
+        outputVcf( variants, vcffile, anoFields )
 
         return stats.nline
     }
@@ -1112,7 +1097,7 @@ class Canary
         //
         if ( complex && mmap.size() > 1 )
         {
-            Map cplx = sw.complex( fmt, maxComplexSize, maxMnpGap )
+            Map cplx = sw.complex( fmt, MAX_COMPLEX_MUT, INTER_MUT_MNP_GAP )
             if ( cplx )
             {
                 if ( debug ) debugfile << "## Complex MNP ${cplx.ref} -> ${cplx.alt} pos=${cplx.pos}\n"
@@ -1475,15 +1460,71 @@ class Canary
      * @param vars
      * @param vcffile
      */
-    private static void outputVcf( List<Map> vars, File vcffile )
+    private static void outputVcf( List<Map> vars, File vcffile, List anoFields )
     {
-        //  Use the filname without extension for sample name
+        //  Use the filename without extension for sample name
         //
-        vcffile << Vcf.header( vcffile.name.split("\\.", 2)[0] )
+        vcffile << Vcf.header( 'Canary', anoFields, vcffile.name.split("\\.", 2)[0] )
 
+        //  Annotate each variant with requested fields
+        //
+        annotateVars( vars, anoFields )
+
+        //  Output each variant as a VCF line
+        //
         for ( var in vars )
         {
             vcffile << vcfLine( var )
+        }
+    }
+
+    /**
+     * Annotate each variant with MyVariant
+     *
+     * @param vars      List<Map> of variants to annotate var.hgvsg is passed to annotator
+     * @param fields    List of fields to find annotations for see http://myvariant.info/v1/api/
+     */
+    private static void annotateVars( List<Map> vars, List fields )
+    {
+        if ( ! fields || ! vars ) return
+
+        //  Get slice of maps with variants
+        //
+        List<String> hgvsgs = vars.hgvsg
+
+        //  Call MyVariant via REST API
+        //
+        List<Map> myv = MyVariant.submit( hgvsgs, fields )
+
+        //  Get annotations as flattened Maps eg Map<String,String>
+        //
+        List<Map> annos = MyVariant.flatMaps( myv, '' )
+        log.debug( "${fields} ${annos.size()} ${annos}" )
+
+        for ( var in vars )
+        {
+            //  Look for annotations for this variant
+            //
+            Map ano = annos.find { Map v -> v.query == var.hgvsg }
+            if ( ano && ! ano.notfound )
+            {
+                //  Save annotation map for VCF INFO field
+                //
+                var.myv = [:]
+                for ( kv in ano )
+                {
+                    //  Only save fields of interest
+                    //
+                    if ( kv.key in fields )
+                    {
+                        var.myv << kv
+                    }
+                }
+            }
+            else
+            {
+                log.warn( "Couldn't find annotations for ${var.hgvsg}")
+            }
         }
     }
 
@@ -1496,12 +1537,22 @@ class Canary
     static String vcfLine( Map var )
     {
         String freq = outpct( var.totcnt, var.cnt )
-        String info = "HGVSg=${var.hgvsg}"
+        String info = "HGVSg=${infoClean(var.hgvsg)}"
         info += ";numAmps=${var.numAmps}"
-        info += ";amps=${removeSpaces(var.amp)}"
+        info += ";amps=${infoClean(var.amp)}"
         if ( var.ampBias )          info += ";ampbias=" + String.format( "%.2f", var.ampBias )
         if ( var.fsRescue > 10 )    info += ";fsRescue=${var.fsRescue}"
         if ( var.homopolymer )      info += ";homopolymer=${var.homopolymer}"
+
+        //  Add MyVariant.info annotations
+        //
+        if ( var.myv )
+        {
+            for ( kv in var.myv )
+            {
+                info += ";${infoClean(kv.key)}=${infoClean(kv.value)}"
+            }
+        }
 
         //  VCF columns
         //
@@ -1521,9 +1572,15 @@ class Canary
         return flds.join('\t') + '\n'
     }
 
-    static String removeSpaces( String txt )
+    /**
+     * Remove all VCF INFO field incompatible characters
+     *
+     * @param txt   String to sanitise
+     * @return      Cleaned String
+     */
+    static String infoClean( String txt )
     {
-        return txt.replaceAll( / /, '' )
+        return txt.replaceAll( / |;|=/, '_' )
     }
 
     //  hg19 Chromosomes and their lengths
