@@ -22,6 +22,7 @@ import org.apache.log4j.Level
 import org.apache.log4j.Logger
 import org.petermac.annotate.MyVariant
 import org.petermac.util.Fasta
+import org.petermac.util.Locator
 import org.petermac.util.SmithWaterman
 import org.petermac.util.Vcf
 import org.petermac.util.Vcf2Tsv
@@ -328,6 +329,25 @@ class Canary
             System.exit(1)
         }
 
+        //  Check we have a genome if we are normlising variants
+        //
+        boolean haveGenome = false
+        if ( opt.normalise )
+        {
+            Locator loc = Locator.instance
+
+            File genome = new File( loc.genomePath )
+
+            if ( loc.genomePath && genome.exists())
+            {
+                haveGenome = true
+            }
+            else
+            {
+                log.error( "--normalise option requires genome files at ${loc.genomePath}, won't perform normalisation")
+            }
+        }
+
         Map tsMap = null
         if ( opt.transcript )
         {
@@ -378,7 +398,7 @@ class Canary
 
         //  Create optional Normalised/Annotated VCF file of output
         //
-        if ( opt.normalise && nlines )
+        if ( opt.normalise && nlines && haveGenome )
         {
             File normf  = new File( opt.normalise as String )
             normf.delete()
