@@ -17,7 +17,7 @@ Canary is a clinically tested tool which performs the key pipeline tasks of:
 - calling of variants, 
 - 3' shifting, 
 - coalescing of MNPs (multi-nucleotide polymorphisms), 
-- Refseq transcript selectionc$,
+- Refseq transcript selection,
 - rendering of variants into HGVS nomenclature and
 - annotation of the VCF file with MyVariant.info attributes.
 
